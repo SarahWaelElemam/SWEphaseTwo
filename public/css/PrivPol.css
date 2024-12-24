@@ -1,0 +1,88 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;  /* Light gray background */
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Styles */
+header {
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+h4 {
+    font-family: "Times New Roman", Times, serif; /* Times New Roman font */
+    font-size: 1.2em; /* Reduced size */
+    font-weight: 300; /* Lighter weight for a thinner look */
+    margin-bottom: 20px;
+    color: #333;
+}
+
+header .logo h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: rgb(218, 218, 50);
+}
+
+/* About Us Section */
+.PrivPol {
+    padding: 20px 30px;  /* Add space around the section */
+    text-align: left;    /* Align text to the left */
+    background-color: transparent; /* No background box */
+}
+
+.PrivPol ul {
+    list-style-type: disc; /* Default bullet points */
+    padding-left: 20px; /* Space between the bullets and the text */
+    margin: 20px 0; /* Margin around the list */
+}
+
+.PrivPol li {
+    font-size: 1em; /* Reduced font size for list items */
+    line-height: 1.6; /* Space between lines for readability */
+    color: #666; /* Color for the list items */
+    margin-bottom: 10px; /* Space between list items */
+}
+
+/* Optional: Change bullet point color */
+.PrivPol ul {
+    list-style-position: outside; /* Bullets outside the list */
+}
+
+.PrivPol ul li::marker {
+    color: #333; /* Bullet color */
+    font-weight: bold; /* Bold bullets */
+}
+
+h2 {
+    font-family: "Times New Roman", Times, serif; /* Times New Roman font */
+    font-size: 2em; /* Maintain size */
+    font-weight: 300; /* Lighter weight for a thinner look */
+    margin-bottom: 20px;
+    color: #333;
+}
+
+p {
+    font-family: Georgia, 'Times New Roman', Times, serif; /* Georgia as the primary font */
+    font-size: 1em; /* Reduced font size */
+    margin-bottom: 15px;
+    line-height: 1.8;
+    color: #666;
+}
+
+footer p {
+    color: black; /* Set text color to black */
+    font-size: 1.5em;
+}

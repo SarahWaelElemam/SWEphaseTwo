@@ -1,0 +1,163 @@
+.body{
+    background: linear-gradient(to top, white,white,white, #ffcd037f);
+}
+.form_input_text {
+    font-size: 32px;
+}
+
+input::placeholder {
+    color: rgba(169, 169, 169, 0.99) !important;
+}
+.form-check-input:checked {
+    background-color: #ffc23d;
+    border-color: #ffc23d;
+}
+input.form-control.body-4-regular.form_input_text,textarea#exampleFormControlTextarea1 {
+    border-radius: 40px;
+    padding-left: 20px;
+}
+.type-contacts-icon1{
+    color: #fff;
+    font-size: 40px;
+    background-color: #ffc23d;
+    padding: 10px 13px;
+    border-radius: 50%;
+}
+.type-contacts-icon2{
+    color: #fff;
+    font-size: 40px;
+    background-color: #20c02d;
+    padding: 10px 13px;
+    border-radius: 50%;
+}
+.input-group-holder{
+    background: no-repeat;
+    border: none;
+    position: absolute;
+    left: 10px;
+    z-index: 1!important;
+    font-size: 38px;
+    top: 20px;
+    color: #101010cc;
+}
+.search-input-field{
+    width: 100%!important;
+    font-size: 26px;
+    height: 88px;
+    border-radius: 40px!important;
+    padding-left: 78px;
+    z-index: 0!important;
+	border-radius: 40px;
+}
+.search-input-button{
+    position: absolute!important;
+    right: 10px;
+    top: 10px;
+    z-index:1!important;
+}
+.left_box h2 {
+    margin-bottom: 16px !important;
+}
+
+.left_box, .right_box {
+    padding: 40px !important;
+    border-radius: 64px !important;
+}
+
+p.opening-time.body-4-regular {
+    margin-bottom: 64px !important;
+}
+
+.call-icon span.the_icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px !important;
+    height: 50px !important;
+}
+
+.call-icon {
+    gap: 24px !important;
+    flex-direction: row !important;
+}
+
+.call-icon:nth-child(3) {
+    margin-bottom: 38px !important;
+}
+
+form input:not(.form-check-input) {
+    border: 1px solid #D1D1D6 !important;
+    border-radius: 100px !important;
+    color: black !important;
+    padding: 24px !important;
+}
+form textarea{
+    border-radius: 20px !important;
+    padding: 24px !important;
+}
+form input::placeholder, form textarea::placeholder{
+    color: #B2B2B2 !important;
+}
+form button{
+    padding: 17px 40px !important;
+}
+
+.form-check-inline.align-self-center {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px !important;
+    align-items: center !important;
+    align-self: flex-start !important;
+}
+
+@media screen and (max-width:768px){
+    .left_box, .right_box {
+        padding: 20px !important;
+        border-radius: 30px !important;
+    }
+    .left_box h2 {
+        margin-bottom: 8px !important;
+    }
+    p.opening-time.body-4-regular {
+        margin-bottom: 40px !important;
+    }
+    .call-icon:nth-child(3) {
+        margin-bottom: 16px !important;
+    }
+    .call-icon span.the_icon {
+        width: 45px !important;
+        height: 45px !important;
+    }
+    .right_box h2{
+        margin-bottom: 20px !important;
+    }
+    form input:not(.form-check-input) {
+        padding: 14px 18px !important;
+    }
+    .mb-3{
+        margin-bottom: 8px !important;
+    }
+    .row.mb-3 > .field-row:first-child {
+        margin-bottom: 8px !important;
+    }
+    form button{
+        width: 100% !important;
+    }
+}
+
+@media only screen and (max-width: 640px){
+    .search-container{
+        width: 100%!important;
+    }
+    #uploadButton, #uploadButton{
+        white-space: pre-line;
+        height: auto;
+    }
+    body > div.wrapper > section.contactus.main_content > div > div > div > div.col-sm-12.col-lg-8.box_corner.box_white > div.d-flex.justify-content-between.mb-4{
+        flex-wrap: wrap;
+    }
+    body > div.wrapper > section.contactus.main_content > div > div > div > div.col-sm-12.col-md-12.col-lg-8.box_corner.box_white > div:nth-child(2) > div:nth-child(1) > input,
+    body > div.wrapper > section.contactus.main_content > div > div > div > div.col-sm-12.col-md-12.col-lg-8.box_corner.box_white > div:nth-child(4) > div.col-md-2.col-sm-12 > input{
+        margin-bottom: 20px;
+    }
+}

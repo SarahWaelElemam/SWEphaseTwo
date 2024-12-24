@@ -1,0 +1,416 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800');
+
+*{
+  margin:0;
+  padding:0;
+  margin-block-start:0;
+  margin-block-end:0;
+} 
+body{
+  font-family: 'Nunito Sans', sans-serif;
+  background: linear-gradient(to top, white,white,white, #ffcd037f);
+}
+.filter{
+    padding: 2%;
+    margin-left: 4%;
+    margin-right: 4%;
+}
+.filter-box {
+    display: flex;
+    background-color: #fcba038f;
+    gap: 10px;
+    padding: 1%;
+    border-radius: 20px; /* Add this line for rounded corners */
+}
+
+
+.filter-box input {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 20px;
+    margin-left: 2rem;
+    border-color: white;
+}
+#filterbtn{
+    background-color: orange;
+    border-color: orange;
+    font-size: 1.5em;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+input[type="text"], input[type="button"] {
+    padding: 5px;
+}
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+}
+.calendar-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1001;
+}
+#calendar-header {
+    display: flex;
+    background-color: rgba(255, 166, 0, 0.429);
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #ffffff;
+    font-weight: 500;
+}
+#prevMonth,#nextMonth{
+    color: white;
+    background-color: rgba(255, 166, 0, 0.429);
+    border: none;
+    font-size: 1.5rem;
+    padding: 1%;
+}
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+    color: orange;
+}
+.calendar-day {
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+.calendar-day:hover {
+    background-color: #f0f0f0;
+}
+.calendar-weekday {
+    font-weight: bold;
+    text-align: center;
+}
+.past-date {
+    color: #ccc;
+    cursor: not-allowed;
+}
+.past-date:hover {
+    background-color: transparent;
+}
+#closeModal{
+    color: white;
+    background-color: orange;
+    padding: 0.7rem;
+    font-size: 1em;
+    border-radius: 2rem;
+    border-color: orange;
+    float: right;
+}
+/* Ticket styles */
+:root {
+    --bg: #ffffff;
+    --font-color: #333333;
+    --point-color: #e6e5e5;
+}
+
+.strong {
+    color: var(--point-color);
+}
+
+.tickets-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+    
+}
+
+.ticket {
+    position: relative;
+    width: 30%;
+    height: 50vh;
+    background: #ffa200b0;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+    margin: 2rem;
+    margin-left: 4.5rem;
+}
+
+.ticket:hover {
+    transform: rotateY(180deg);
+}
+
+.ticket:hover .back {
+    z-index: 100;
+}
+
+.ticket:hover .front {
+    opacity: 0;
+}
+.info p{
+    font-size: 1.1rem;
+}
+.side {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.side img {
+    object-fit: cover;
+    width: 100%;
+    height: 60%;
+}
+
+.bottom {
+    position: absolute;
+    height: 45%;
+    background: #eceaea;
+    bottom: 0;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+.side:before,
+.side:after {
+    content: "";
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    background: #fefcf8;
+    border-radius: 50%;
+    top: calc(60% - 40px);
+    z-index: 1;
+}
+
+.side:before {
+    left: -20px;
+}
+
+.side:after {
+    right: -20px;
+}
+
+.side h1 {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    color: #ffb300;
+    font-weight: 800;
+    margin: 0;
+    margin-bottom: -5px;
+}
+
+.front span.address {
+    font-size: 13px;
+    color: var(--font-color);
+    letter-spacing: -0.3px;
+}
+
+.front dl {
+    position: relative;
+    width: 100%;
+}
+
+.front dl:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.front dl dt {
+    display: inline-block;
+    width: 50%;
+    float: left;
+    top: 50px;
+    font-size: 12px;
+    position: relative;
+    translate: 3rem;
+}
+
+.front dl dd {
+    margin-top: 14px;
+    display: inline-block;
+    left: -0.2em;
+    width: 33%;
+    position: absolute;
+    color: var(--font-color);
+    text-align: center;
+    font-size: 26px;
+    font-weight: 300;
+    
+}
+
+.front dl dd:nth-of-type(2) {
+    left: 50%;
+}
+
+.front dl dd:nth-of-type(3) {
+    left: 70%;
+}
+
+.side span.floating {
+    display: block;
+    position: absolute;
+    width: 60px;
+    right: 40px;
+    top: -30px;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 18px 5px;
+    border-radius: 50%;
+    color: #ffffff;
+    text-align: center;
+    background: var(--point-color);
+}
+
+span.strong {
+    font-weight: 600;
+}
+
+.back span.floating:before {
+    content: '';
+    width: 20px;
+    height: 11px;
+    border-left: 4px solid var(--point-color);
+    border-bottom: 4px solid var(--point-color);
+    display: block;
+    transform: rotate(-50deg) translate(7px, 12px);
+}
+
+.back .bottom {
+    background: var(--point-color);
+}
+
+.back h1 {
+    color: #ffffff;
+}
+
+.back span.floating {
+    background: #ffffff;
+    color: var(--point-color);
+}
+
+.clearfix:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.back table {
+    color: #ffffff;
+}
+
+.back .span {
+    color: #ffffff;
+}
+
+.back .top .span + .span {
+    margin-top: 10px;
+}
+
+.back .top h2 {
+    font-size: 12px;
+    opacity: 0.7;
+    font-weight: 300;
+    text-transform: uppercase;
+}
+
+.back .span span {
+    font-size: 16px;
+}
+
+.back .span.span8 {
+    float: left;
+    width: 66.66666%;
+}
+
+.back .span.span4 {
+    float: left;
+    width: 33.33333%;
+}
+
+.back .top {
+    padding: 30px 20px;
+}
+
+.payment .row {
+    margin-top: 10px;
+}
+
+.card-num {
+    border-bottom: 1px solid #ffffff;
+}
+
+.payment input {
+    background: transparent;
+    border: 0;
+    width: 20%;
+    font-size: 14px;
+    padding: 4px 0;
+    color: #fff;
+    letter-spacing: 0.2px;
+}
+
+::placeholder {
+    color: #8a8a8a;
+    opacity: 0.7;
+}
+
+.payment .row .span4 {
+    width: 30%;
+    float: left;
+    border-bottom: 1px solid #ffffff;
+}
+
+.payment .row .span4 + .span4 {
+    margin-left: 5%;
+}
+
+.payment .span input {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .ticket {
+        width: 45%;
+    }
+}
+
+@media (max-width: 480px) {
+    .ticket {
+        width: 100%;
+    }
+}
+.Book {
+    color: #ffffff;
+    font-size: 1rem;
+    background-color: #ffb223;
+    border-radius: 1.7rem;
+    padding: 1.2rem;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    width: fit-content;
+    translate: 0rem 2rem;
+    border-color: orange;
+}
+.row-tick{
+    display: flex;
+}

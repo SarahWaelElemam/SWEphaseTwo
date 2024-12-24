@@ -1,0 +1,235 @@
+/* Base styles for the body */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  /* Make body a flex container */
+  /* Ensure body takes full height of viewport */
+}
+
+/* Footer styles */
+footer {
+  flex-direction: column; /* Arrange items vertically */
+  padding: 20px 40px;
+  color: #000;
+  background: linear-gradient(to top, white, white, #ffcd037f);
+  margin-top: auto; /* Push footer to the bottom of the page */
+}
+
+/* Footer Container for better spacing */
+.footer-container {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+padding: 20px 0;
+gap: 40px; /* Spacing between each section */
+}
+
+/* Footer Left with Image and Links */
+.footer-left {
+display: flex;
+align-items: center;
+gap: 20px;
+}
+
+
+/* Adjust Footer Logo Image */
+.footer-logo {
+width: 150px; /* Adjust width as needed */
+height: auto;
+margin-right: 20px;
+}
+
+/* Footer Links */
+.footer-links {
+list-style: none;
+padding: 0;
+margin: 0;
+display: flex;
+flex-direction: column;
+gap: 5px;
+translate: 5rem -5.2rem;
+}
+
+.footer-links li {
+margin-bottom: 5px;
+}
+
+.footer-links a {
+text-decoration: none;
+color: #000;
+white-space: nowrap;
+}
+
+/* Footer Info */
+.footer-info {
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+
+.footer-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-info li {
+  margin-bottom: 5px;
+}
+
+.footer-info a {
+  text-decoration: none;
+  color: #000;
+  white-space: nowrap;
+}
+
+/* Footer Help Section */
+.footer-help {
+margin: 0;
+padding: 0 20px;
+}
+
+.footer-help a {
+  line-height: 1.5;
+  background-color: #ffcd0373;
+  border-color: transparent;
+  border-radius: 20px;
+  padding: 10px 30px;
+  text-decoration: none;
+  color: #000;
+  display: inline-block;
+}
+
+.footer-help a:hover {
+  color: white;
+  background-color: #ffcb10;
+}
+
+/* Bottom section of the footer */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+}
+
+/* Social icons styling */
+.social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icons a {
+  margin-right: 15px;
+  background-color: #ffcb10;
+  border-radius: 50%;
+  padding: 10px;
+  padding: 20px;
+  transition: background-color 0.3s; /* Smooth hover effect */
+}
+
+.social-icons img {
+  width: 30px;
+  height: 30px;
+}
+.social-icons img:hover {
+  background-color: #adadc6;
+  width: 30px;
+  height: 30px;
+}
+.footer-bottom p {
+  margin: 0 20px;
+  text-align: center;
+}
+
+.footer-bottom a {
+  color: #000;
+  text-decoration: none;
+}
+a {
+  position: relative; /* Needed for positioning the pseudo-element */
+  color: inherit; /* Inherit color from parent */
+  text-decoration: none; /* Remove default underline */
+}
+a::after {
+  content: ''; /* Create an empty pseudo-element */
+  position: absolute; /* Position it absolutely */
+  left: 0; /* Start from the left */
+  bottom: 0; /* Position it at the bottom of the text */
+  height: 2px; /* Height of the underline */
+  width: 100%; /* Full width */
+  background-color: #ffab03; /* Color of the underline */
+  transform: scaleX(0); /* Start with no width */
+  transition: transform 0.3s ease; /* Transition effect */
+}
+a:hover{
+  color:#ffab03;
+}
+a:hover::after {
+  
+  transform: scaleX(1); /* Expand to full width on hover */
+}
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-left {
+    margin: 0;
+    margin-bottom: 20px;
+  }
+
+  .footer-help {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-logo {
+    font-size: 1.5rem;
+  }
+
+  .footer-links a,
+  .footer-info a {
+    font-size: 0.9rem;
+  }
+
+  .footer-help a {
+    padding: 8px 16px;
+  }
+
+  .social-icons img {
+    width: 25px;
+    height: 25px;
+  }
+  .footer-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-help {
+    margin-top: 10px;
+  }
+
+  .footer-bottom p{
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 100vh; /* Takes full viewport height */
+    text-align: center;
+    font-family: Arial, sans-serif; /* Optional: Sets a font */
+    font-size: 1rem; /* Adjust font size as needed */ 
+    margin-left: 50rem;
+}
+
+}
