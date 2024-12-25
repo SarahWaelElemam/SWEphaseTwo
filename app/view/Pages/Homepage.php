@@ -121,6 +121,6 @@
         <button class="login-signup-btn">Login / Signup</button>
     </div>
     <?php include "../Components/Footer.php"?>
-<script src="../js/homepage.js"></script>
+<script src="../../../public/js/homepage.js"></script>
 </body>
 </html>
