@@ -93,9 +93,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteUser'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../../public/css/dashboard.css">
+    <link href="../../../public/css/sidebar.css" rel="stylesheet">
+
     <title>Admin Dashboard</title>
 </head>
 <body>
+<div class="sidebar">
+        
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="chat.php" >Chat</a></li>
+            <li><a href="#">Calendar</a></li>
+            <li><a href="#">Events</a></li>
+            <li><a href="dashboard.php"class="active">User Management</a></li>
+        </ul>
+    </div>
+
+    <style>
+       
+    </style>
+    <div style="margin-left:300px;">
     <h1>Admin Dashboard</h1>
 
     <!-- Add/Edit User Form -->
@@ -125,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteUser'])) {
 
     <!-- Display Users -->
     <h2>All Users</h2>
-    <table class="common-table-style">
+    <table class="common-table-style" style="width:100%;">
         <thead>
             <tr>
                 <th>ID</th>
@@ -172,5 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteUser'])) {
             <?php endif; ?>
         </tbody>
     </table>
+    </div>
 </body>
 </html>

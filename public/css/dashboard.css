@@ -1,4 +1,4 @@
-/* General Styles */
+General Styles
 body {
   font-family: "Roboto", sans-serif;
   background-color: #f4f7f6;
@@ -106,7 +106,7 @@ tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-tr:hover {
+td:hover {
   background-color: #ecf0f1;
 }
 
