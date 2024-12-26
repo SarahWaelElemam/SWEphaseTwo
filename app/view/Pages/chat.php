@@ -73,8 +73,8 @@ $result = $stmt->get_result();
             <li><a href="dashboard.php">User Management</a></li>
         </ul>
     </div>
-
     <div class="main-content">
+
         <h1>Customer Support Tickets</h1>
         <div class="filter-section">
             <input id="searchBar" type="text" placeholder="Search tickets..." class="form-control">

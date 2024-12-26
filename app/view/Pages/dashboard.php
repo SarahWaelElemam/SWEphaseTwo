@@ -97,18 +97,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteUser'])) {
 
     <title>Admin Dashboard</title>
 </head>
-<body>
 <div class="sidebar">
-        
-        <ul>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="chat.php" >Chat</a></li>
-            <li><a href="#">Calendar</a></li>
-            <li><a href="#">Events</a></li>
-            <li><a href="dashboard.php"class="active">User Management</a></li>
-        </ul>
-    </div>
+    
+    <ul>
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="chat.php" >Chat</a></li>
+        <li><a href="#">Calendar</a></li>
+        <li><a href="#">Events</a></li>
+        <li><a href="dashboard.php"class="active">User Management</a></li>
+    </ul>
+</div>
 
+<body>
     <style>
        
     </style>

@@ -29,6 +29,8 @@
     display: block;
     padding: 10px;
     border-radius: 5px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
     transition: background-color 0.3s ease;
 }
 
