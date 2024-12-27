@@ -42,23 +42,23 @@ class Eventsdb extends Model {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
     
-    public function addEvent($name, $location, $category, $status, $date, $time, $createdBy, $detailedLoc, $image, $priceRange1, $priceRange2) {
-        $sql = "INSERT INTO Events (Name, Location, Category, Status, Date, Time, Created_By, detailed_loc, image, price_range1, price_range2) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public function addEvent($name, $location, $category, $status, $date, $time, $createdBy, $detailedLoc, $image, $priceRange1, $priceRange2,$about) {
+        $sql = "INSERT INTO Events (Name, Location, Category, Status, Date, Time, Created_By, detailed_loc, image, price_range1, price_range2,about) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ssssssissdd', $name, $location, $category, $status, $date, $time, $createdBy, $detailedLoc, $image, $priceRange1, $priceRange2);
+        $stmt->bind_param('ssssssissdd', $name, $location, $category, $status, $date, $time, $createdBy, $detailedLoc, $image, $priceRange1, $priceRange2,$about);
         $stmt->execute();
         return $this->conn->insert_id;
     }
 
     // Update an existing event with price_range1 and price_range2
-    public function updateEvent($eventId, $name, $location, $category, $status, $date, $time, $detailedLoc, $image, $priceRange1, $priceRange2) {
+    public function updateEvent($eventId, $name, $location, $category, $status, $date, $time, $detailedLoc, $image, $priceRange1, $priceRange2,$about) {
         $sql = "UPDATE Events 
                 SET Name = ?, Location = ?, Category = ?, Status = ?, 
-                    Date = ?, Time = ?, detailed_loc = ?, image = ?, price_range1 = ?, price_range2 = ? 
+                    Date = ?, Time = ?, detailed_loc = ?, image = ?, price_range1 = ?, price_range2 = ? ,about = ?
                 WHERE Event_ID = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ssssssssddi', $name, $location, $category, $status, $date, $time, $detailedLoc, $image, $priceRange1, $priceRange2, $eventId);
+        $stmt->bind_param('ssssssssddi', $name, $location, $category, $status, $date, $time, $detailedLoc, $image, $priceRange1, $priceRange2, $eventId,$about);
         $stmt->execute();
         return $stmt->affected_rows;
     }
