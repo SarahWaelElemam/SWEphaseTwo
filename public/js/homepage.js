@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const eventsPerPage = 3;
     const maxIndex = Math.max(0, events.length - eventsPerPage);
 
-    function updateSliderPosition() {
+   function updateSliderPosition() {
         const translateX = -currentIndex * (100 / eventsPerPage);
         upcomingEventsSlider.style.transform = `translateX(${translateX}%)`;
     }
