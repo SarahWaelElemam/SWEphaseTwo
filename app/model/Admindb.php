@@ -47,6 +47,26 @@ class Admindb extends Model {
         return $result->fetch_assoc();
     }
 
+    // Fetch a user by email
+    public function getUserByEmail($email) {
+        $sql = "SELECT * FROM user WHERE Email = ?";
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            throw new Exception("Error preparing query: " . $this->conn->error);
+        }
+
+        $stmt->bind_param('s', $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if (!$result) {
+            throw new Exception("Error fetching user by email: " . $stmt->error);
+        }
+
+        return $result->fetch_assoc();
+    }
+
     // Add a new user
     public function addUser($email, $password, $role, $fname, $lname, $birthdate, $phone, $government, $gender) {
         $sql = "INSERT INTO user (Email, Password, Role, FName, LName, BirthDate, Phone, Government, Gender) 
