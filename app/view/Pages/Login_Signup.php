@@ -1,7 +1,12 @@
-<?php 
-// Start the session and include the model for backend logic.
-session_start();
+<?php
+require_once __DIR__ . '../../../Controller/SessionManager.php';
 require_once("../../model/LoginSignupModel.php");
+use App\Controller\SessionManager;
+
+// Redirect if already logged in
+if (SessionManager::isLoggedIn()) {
+    SessionManager::redirect('/SWEphaseTwo/app/view/Pages/Homepage.php');
+}
 
 $model = new LoginSignupModel();
 
@@ -36,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Login
                     <span class="underline"></span>
                 </button>
-                <form class="form form-login" method="POST" action="">
-                    <fieldset>
+                <form class="form form-login" method="POST" action="login_signup.php">
+                <fieldset>
                         <legend>Please, enter your email and password for login.</legend>
                         <div class="input-block">
                             <label for="login-email">E-mail</label>
@@ -46,10 +51,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="input-block">
                             <label for="login-password">Password</label>
                             <input id="login-password" type="password" name="Password" required>
+                       <!-- Add the Forgot Password link here -->
+<div class="forgot-password" style="margin-top: 15px; text-align: right;">
+    <a href="#" id="forgot-password-link">Forgot Password?</a>
+</div>
                         </div>
                     </fieldset>
                     <input type="hidden" name="formType" value="login">
                     <button type="submit" class="btn-login">Login</button>
+               
                 </form>
             </div>
             
