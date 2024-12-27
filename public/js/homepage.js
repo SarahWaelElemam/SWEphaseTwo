@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const slider = document.querySelector(".ticket-slider");
     const tickets = document.querySelectorAll(".ticket");
     let currentIndex = 0;
+    
      
 
     if (tickets.length > 1) {
@@ -68,39 +69,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Upcoming Events Slider
-      let currentUpcomingPage = 0;
-    const eventsPerPage = 3;
+    const upcomingEventsSlider = document.querySelector('.upcoming-events-slider');
     const events = document.querySelectorAll('.upcoming-event');
-    const maxPages = Math.ceil(events.length / eventsPerPage);
-
-    function updateUpcomingEventsVisibility() {
-        const startIdx = currentUpcomingPage * eventsPerPage;
-        events.forEach((event, index) => {
-            event.style.display = index >= startIdx && index < startIdx + eventsPerPage ? 'block' : 'none';
-        });
-    }
-
     const prevBtn = document.getElementById('new-prev-btn');
     const nextBtn = document.getElementById('new-next-btn');
+    const eventsPerPage = 3;
+    const maxIndex = Math.max(0, events.length - eventsPerPage);
 
-    if (prevBtn && nextBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (currentUpcomingPage > 0) {
-                currentUpcomingPage--;
-                updateUpcomingEventsVisibility();
-            }
-        });
-
-        nextBtn.addEventListener('click', () => {
-            if (currentUpcomingPage < maxPages - 1) {
-                currentUpcomingPage++;
-                updateUpcomingEventsVisibility();
-            }
-        });
+    function updateSliderPosition() {
+        const translateX = -currentIndex * (100 / eventsPerPage);
+        upcomingEventsSlider.style.transform = `translateX(${translateX}%)`;
     }
 
-    // Initialize visibility
-    updateUpcomingEventsVisibility();
+    function updateNavigationButtons() {
+        prevBtn.disabled = currentIndex <= 0;
+        nextBtn.disabled = currentIndex >= maxIndex;
+        
+        prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
+        nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSliderPosition();
+            updateNavigationButtons();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < maxIndex) {
+            currentIndex++;
+            updateSliderPosition();
+            updateNavigationButtons();
+        }
+    });
+
+    // Initialize buttons state
+    updateNavigationButtons();
 });
 
 

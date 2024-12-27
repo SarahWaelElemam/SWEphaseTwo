@@ -146,23 +146,61 @@ body, html {
     margin-top: 20px;
 }
 
+/* First add these styles to your existing CSS */
 .hot-events-slider {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    position: relative;
+}
+
+.hot-events-slider::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .hot-event {
-    width: 300px;
+    flex: 0 0 300px; /* Fixed width */
     height: 200px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
+    margin-right: 20px;
     background-size: cover;
     background-position: center;
-    transition: all 0.3s ease;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+/* Style for the scroll buttons */
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
     cursor: pointer;
-    border: 3px solid transparent;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.scroll-left {
+    left: 10px;
+}
+
+.scroll-right {
+    right: 10px;
+}
+
+/* Hide scroll buttons when not needed */
+.scroll-button.hidden {
+    display: none;
 }
 
 .hot-event.active {
@@ -233,6 +271,8 @@ body, html {
     object-fit: cover;
     border-radius: 8px;
 }
+
+
 /* Navigation Buttons */
 .navigation-buttons {
     display: flex;
@@ -577,3 +617,14 @@ font-family: 'Times New Roman', Times, serif;
     }
 }
 
+
+
+
+
+
+
+.upcoming-event:hover {
+    transform: scale(1.05);
+    border-color: #fedda8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

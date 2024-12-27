@@ -20,7 +20,7 @@ if ($conn->connect_error) {
 $eventsDb = new Eventsdb($conn);
 
 // Fetch the 6 newest events
-$events = $eventsDb->getAllEventsToDisplay(4);
+$events = $eventsDb->getAllEventsToDisplay(8);
 foreach ($events as &$event) { // Use reference to modify the original array
     // Check if the image is a valid BLOB and convert to base64
     if (!empty($event['image'])) {
