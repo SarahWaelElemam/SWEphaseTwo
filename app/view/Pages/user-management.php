@@ -216,14 +216,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteUser'])) {
                                     <td><?= htmlspecialchars($user['Government'] ?? 'N/A') ?></td>
                                     <td><?= htmlspecialchars($user['Gender'] ?? 'N/A') ?></td>
                                     <td>
-                                        <form method="POST" style="display: inline;">
+
+                                    <!-- ////hello update -->
+                                        <!-- <form method="POST" style="display: inline;"> -->
                                             <input type="hidden" name="id" value="<?= htmlspecialchars($user['User_ID']) ?>">
                                             <button type="submit" name="editUser" class="border-0 text-white bg-primary p-2"
                                                 onmouseover="this.style.filter='brightness(85%)';"
-                                                onmouseout="this.style.filter='brightness(100%)';">
+                                                onmouseout="this.style.filter='brightness(100%)';"
+                                                 data-bs-toggle="modal"
+                                                  data-bs-target="#userModal"
+                                                  data-id="<?= htmlspecialchars($user['User_ID']) ?>"
+    data-fname="<?= htmlspecialchars($user['FName']) ?>"
+    data-lname="<?= htmlspecialchars($user['LName']) ?>"
+    data-email="<?= htmlspecialchars($user['Email']) ?>"
+    data-phone="<?= htmlspecialchars($user['Phone']) ?>"
+    data-birthdate="<?= htmlspecialchars($user['BirthDate']) ?>"
+    data-government="<?= htmlspecialchars($user['Government']) ?>"
+    data-gender="<?= htmlspecialchars($user['Gender']) ?>"
+    data-role="<?= htmlspecialchars($user['Role']) ?>"
+                                                >
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
-                                        </form>
+                                        <!-- </form> -->
                                         <form method="POST" style="display: inline;"
                                             onsubmit="return confirm('Are you sure you want to delete this user?');">
                                             <input type="hidden" name="id" value="<?= htmlspecialchars($user['User_ID']) ?>">
@@ -363,7 +377,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deleteUser'])) {
                 lengthChange: true
             });
         });
+
     </script>
+    <script>
+    // When the modal is shown, populate the fields
+    document.addEventListener('DOMContentLoaded', function () {
+        const userModal = document.getElementById('userModal');
+
+        userModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Button that triggered the modal
+            const modal = userModal;
+
+            // Extract user details from data-* attributes
+            const userId = button.getAttribute('data-id');
+            const fname = button.getAttribute('data-fname');
+            const lname = button.getAttribute('data-lname');
+            const email = button.getAttribute('data-email');
+            const phone = button.getAttribute('data-phone');
+            const birthdate = button.getAttribute('data-birthdate');
+            const government = button.getAttribute('data-government');
+            const gender = button.getAttribute('data-gender');
+            const role = button.getAttribute('data-role');
+
+            // Populate the form fields
+            modal.querySelector('#inputId').value = userId || '';
+            modal.querySelector('#inputFName').value = fname || '';
+            modal.querySelector('#inputLName').value = lname || '';
+            modal.querySelector('#inputEmail').value = email || '';
+            modal.querySelector('#inputPhone').value = phone || '';
+            modal.querySelector('#inputBirthDate').value = birthdate || '';
+            modal.querySelector('#inputGovernment').value = government || '';
+            modal.querySelector('#inputGender').value = gender || 'Male';
+            modal.querySelector('#inputRole').value = role || 'Customer';
+
+            // Clear password field
+            modal.querySelector('#inputPassword').value = '';
+        });
+    });
+</script>
+
 </body>
 
 </html>
