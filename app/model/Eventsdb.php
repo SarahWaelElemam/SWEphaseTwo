@@ -8,7 +8,10 @@ class Eventsdb extends Model {
         $this->conn = $conn;
     }
     public function getAllEventsToDisplay() {
-        $sql = "SELECT * FROM events WHERE Status = 'ACCEPTED'";
+        $sql = "SELECT e.*, u.image as organizer_image 
+                FROM events e 
+                LEFT JOIN user u ON e.Created_By = u.User_ID 
+                WHERE e.Status = 'ACCEPTED'";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();

@@ -43,11 +43,11 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
                 <h1><?php echo htmlspecialchars($_POST['name']); ?></h1>
                 <p class="Time"><?php echo htmlspecialchars($dateTime); ?></p>
                 <p><?php echo htmlspecialchars($_POST['location']); ?></p>
-                <button class="book-btn" onclick="window.location.href='pay.php?event=<?php echo urlencode($_POST['name']); ?>'">Book Now</button>
+                <button class="btn-book" onclick="scrollToTicketSection()">Book Now</button>
             </div>
             <div class="right-details">
                 <p>Organized by</p>
-                <h3><?php echo htmlspecialchars($_POST['created_by']); ?></h3>
+                <img src="../../../public/images/<?php echo htmlspecialchars($_POST['organizer_image']); ?>">
             </div>
         </div>
     </div>
@@ -57,10 +57,10 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
         <p><?php echo htmlspecialchars($_POST['about']); ?></p>
     </div>
 
-    <div class="ticket-section" style='border:none'>
+    <div class="ticket-section" id="ticket-section" style="border:none">
         <h2 style="text-align: left">Tickets</h2>
         <div class="ticket-container" style='border:none'>
-    <?php
+        <?php
     $displayedTypes = []; // Declare the array outside the loop to track displayed ticket types
 
     foreach ($tickets as $ticket) {
@@ -68,14 +68,19 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
             // Add the ticket type to the array
             $displayedTypes[] = $ticket['type'];
 
+            // Create button onclick based on category
+            $buttonOnClick = $_POST['Category'] === 'Concert' 
+            ? "openModal('" . htmlspecialchars($ticket['type']) . "', '" . htmlspecialchars($ticket['Price']) . "', '" . htmlspecialchars($ticket['Ticket_ID']) . "')"
+            : "confirmPurchase('" . htmlspecialchars($ticket['type']) . "', '" . htmlspecialchars($ticket['Price']) . "', '" . htmlspecialchars($ticket['Ticket_ID']) . "')";
+
             // Render the ticket
             echo "<div class='ticket' style='border:none; background-color:transparent; box-shadow:none; '>
                     <h2 style='background-color:orange; color:white; margin-bottom:0rem; padding:1rem; border-radius:2rem;'> {$ticket['type']}</h2>
                     <p style='background-color:white; box-shadow:0 4px 8px rgba(0, 0, 0, 0.12); 
                     padding:3rem; border-radius:3rem;'>EGP {$ticket['Price']}
                     <button class='ticket-btn' style='background-color: rgba(255, 190, 70, 0.53); color: white; border: none; padding: 1rem 2rem; border-radius: 1rem; cursor: pointer; 
-                     margin-top: 1rem; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%;'
-                     onclick=\"window.location.href='pay.php?ticket_id={$ticket['Ticket_ID']}'\" onmouseover=\"this.style.backgroundColor='orange'\" 
+                     margin-top: 1rem; display: flex; align-items: center; justify-content: center; text-align: center; width: 100%; font-size:1.2rem' 
+                    onclick=\"{$buttonOnClick}\" onmouseover=\"this.style.backgroundColor='orange'\" 
                      onmouseout=\"this.style.backgroundColor='rgba(255, 190, 70, 0.53)'\">
                         Book Now
                     </button>
@@ -83,31 +88,30 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
                   </div>";
         }
     }
-    ?>
+?>
 </div>
 
     </div>
 
     <div id="ticketModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 id="ticketType"></h2>
-            <p id="ticketPrice"></p>
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="ticketType"></h2>
+        <p id="ticketPrice"></p>
 
-            <div class="ticket-selection">
-                <label for="ticketCount" class="ticket-label">Select number of tickets:</label>
-                <select id="ticketCount" class="ticket-select">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
+        <div class="ticket-selection">
+            <label for="ticketCount" class="ticket-label">Select number of tickets:</label>
+            <div class="counter-container">
+                <button type="button" id="decrementBtn" class="counter-btn" onclick="updateTicketCount(-1)">-</button>
+                <input type="text" id="ticketCount" class="ticket-count" value="1" readonly />
+                <button type="button" id="incrementBtn" class="counter-btn" onclick="updateTicketCount(1)">+</button>
             </div>
-
-            <button class="confirm-btn" onclick="confirmPurchase()">Confirm Purchase</button>
         </div>
+
+        <button class="confirm-btn" onclick="confirmPurchase()">Confirm Purchase</button>
     </div>
+</div>
+
 
     <div class="venue-section">
         <h2>Venue</h2>
@@ -131,21 +135,113 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
     </div>
 
     <script>
-    function openModal(ticketType, ticketPrice) {
-        document.getElementById('ticketModal').style.display = 'block';
-        document.getElementById('ticketType').textContent = `Ticket Type: ${ticketType}`;
-        document.getElementById('ticketPrice').textContent = `Price For one Ticket: EGP ${ticketPrice}`;
+        function updateTicketCount(change) {
+    const ticketCountInput = document.getElementById('ticketCount');
+    let currentCount = parseInt(ticketCountInput.value);
+
+    // Update the ticket count, ensuring it stays within the range of 1 to 5
+    currentCount += change;
+
+    if (currentCount < 1) {
+        currentCount = 1; // Minimum value
+    } else if (currentCount > 5) {
+        currentCount = 5; // Maximum value
     }
+
+    ticketCountInput.value = currentCount;
+}
+function openModal(ticketType, ticketPrice, ticketId) {
+    // Store ticket info in data attributes
+    const modal = document.getElementById('ticketModal');
+    modal.dataset.ticketType = ticketType;
+    modal.dataset.ticketPrice = ticketPrice;
+    modal.dataset.ticketId = ticketId;
+    
+    // Show the modal
+    modal.style.display = 'block';
+    document.getElementById('ticketType').textContent = ` ${ticketType}`;
+    document.getElementById('ticketType').style.color = 'orange';
+    document.getElementById('ticketPrice').innerHTML = `Price For one Ticket: <span style="color:black">EGP ${ticketPrice}</span>`;
+    document.getElementById('ticketPrice').style.color = 'gray';
+}
+
 
     function closeModal() {
         document.getElementById('ticketModal').style.display = 'none';
     }
 
-    function confirmPurchase() {
-        const count = document.getElementById('ticketCount').value;
-        alert(`You have selected ${count} tickets`);
-        closeModal();
-        window.location.href = "pay.php";
+    function confirmPurchase(directTicketType = null, directTicketPrice = null, directTicketId = null) {
+    let ticketType, ticketPrice, ticketId, ticketCount;
+    
+    const modal = document.getElementById('ticketModal');
+    
+    // Check if we're coming from the modal or direct button click
+    if (directTicketType === null) {
+        // Coming from modal
+        ticketType = modal.dataset.ticketType;
+        ticketPrice = modal.dataset.ticketPrice;
+        ticketId = modal.dataset.ticketId;
+        ticketCount = document.getElementById('ticketCount').value;
+    } else {
+        // Coming from direct button click
+        ticketType = directTicketType;
+        ticketPrice = directTicketPrice;
+        ticketId = directTicketId;
+        ticketCount = "0"; // Default for direct purchase
+    }
+
+    // Create a form to submit the data
+    const form = document.createElement('form');
+form.method = 'POST';
+form.action = 'pay.php';
+
+    // Add all the event data that was passed from Events.php
+    const eventData = {
+        event_id: '<?php echo htmlspecialchars($_POST["event_id"]); ?>',
+        name: '<?php echo htmlspecialchars(addslashes($_POST["name"])); ?>',
+        location: '<?php echo htmlspecialchars(addslashes($_POST["location"])); ?>',
+        date: '<?php echo htmlspecialchars($_POST["date"]); ?>',
+        time: '<?php echo htmlspecialchars($_POST["time"]); ?>',
+        Category: '<?php echo htmlspecialchars($_POST["Category"]); ?>',
+        organizer_image: '<?php echo htmlspecialchars($_POST["organizer_image"]); ?>',
+        image: '<?php echo htmlspecialchars($_POST["image"]); ?>',
+    };
+
+    // Add event data to form
+    for (const [key, value] of Object.entries(eventData)) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = value;
+    form.appendChild(input);
+}
+
+    // Add ticket data to form
+    const ticketData = {
+        ticket_id: ticketId,
+        ticket_type: ticketType,
+        ticket_price: ticketPrice,
+        ticket_count: ticketCount
+    };
+
+    for (const [key, value] of Object.entries(ticketData)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    }
+
+    // Submit the form
+    document.body.appendChild(form);
+    console.log(eventData.image);
+    form.submit();
+}
+    function scrollToTicketSection() {
+        const ticketSection = document.getElementById('ticket-section');
+        ticketSection.scrollIntoView({
+            behavior: 'smooth'
+        });
     }
     </script>
 </body>

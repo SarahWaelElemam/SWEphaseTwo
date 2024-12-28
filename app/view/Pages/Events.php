@@ -13,6 +13,7 @@ $events = $controller->getEvents();
     <link rel="stylesheet" href="../../../public/css/Events.css">
     <title>Events</title>
 </head>
+
 <body>
     <div class="filter">
         <h3>Event Filter</h3>
@@ -58,7 +59,7 @@ $events = $controller->getEvents();
                     <div class="top">
                         <div class="span">
                             <h2>Organized By</h2>
-                            <span><?php echo htmlspecialchars($event['Created_By']); ?></span>
+                            <img src="../../../public/images/<?php echo htmlspecialchars($event['organizer_image']); ?>" style="width: 15rem; height: 4rem;">
                         </div>
                         <div class="span">
                             <h2>Location</h2>
@@ -69,6 +70,8 @@ $events = $controller->getEvents();
                     <div class="payment bottom">
                         <button class="Book" onclick="navigateToBookNow('<?php 
                             echo htmlspecialchars(json_encode([
+                            'organizer_image' =>$event['organizer_image'],
+                            'Category' =>$event['Category'],
                                 'event_id' => $event['Event_ID'],
                                 'venue_loc' => $event['venue_loc'],
                                 'name' => $event['Name'],
