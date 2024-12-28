@@ -13,99 +13,98 @@ $result = $stmt->get_result();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Support Tickets</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../../public/css/adminchat.css" rel="stylesheet">
-    <link href="../../../public/css/sidebar.css" rel="stylesheet">
-    <style>
-        /* General Styles */
-      
-
-        .main-content {
-            margin-left: 270px;
-            padding: 20px;
-        }
-
-        .filter-section {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .ticket {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
-        }
-
-        .ticket .status {
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 12px;
-            color: white;
-        }
-
-        .ticket .status.pending {
-            background-color: orange;
-        }
-
-        .ticket .status.open {
-            background-color: blue;
-        }
-
-        .ticket .status.resolved {
-            background-color: green;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../../../public/css/core.css">
+    <link rel="stylesheet" href="../../../public/css/style.css">
 </head>
-<body>
-    <div class="sidebar">
-        <ul>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="chat.php" class="active">Chat</a></li>
-            <li><a href="#">Calendar</a></li>
-            <li><a href="#">Events</a></li>
-            <li><a href="dashboard.php">User Management</a></li>
-        </ul>
-    </div>
-    <div class="main-content">
 
-        <h1>Customer Support Tickets</h1>
-        <div class="filter-section">
-            <input id="searchBar" type="text" placeholder="Search tickets..." class="form-control">
-            <select id="statusFilter" class="form-select">
-                <option value="all">All</option>
-                <option value="open">Open</option>
-                <option value="pending">Pending</option>
-                <option value="resolved">Resolved</option>
-            </select>
-            <select id="issueTypeFilter" class="form-select">
-                <option value="all">All Issues</option>
-                <option value="Issue with payment">Issue with Payment</option>
-                <option value="Issue with account">Issue with Account</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-        <div id="ticketsContainer">
-            <?php while ($row = $result->fetch_assoc()) { ?>
-            <div class="ticket" 
-                data-status="<?php echo $row['status']; ?>" 
-                data-issue="<?php echo htmlspecialchars($row['subject']); ?>" 
-                data-message="<?php echo htmlspecialchars($row['message']); ?>" 
-                data-name="<?php echo htmlspecialchars($row['fname'] . ' ' . $row['lname']); ?>" 
-                onclick="openDialog(this)">
-                <h5><?php echo htmlspecialchars($row['subject']); ?></h5>
-                <p class="name">Name: <?php echo htmlspecialchars($row['fname'] . ' ' . $row['lname']); ?></p>
-                <p>Status: <span class="status <?php echo $row['status']; ?>"><?php echo $row['status']; ?></span></p>
+<body>
+    <div class="left-side-bar">
+        <div class="brand-logo">
+            <a href="/">
+                <img src="..." alt="" />
+            </a>
+            <div class="close-sidebar" data-toggle="left-sidebar-close">
+                <i class="ion-close-round"></i>
             </div>
-            <?php } ?>
+        </div>
+        <div class="menu-block customscroll">
+            <div class="sidebar-menu">
+                <ul id="accordion-menu">
+                    <li>
+                        <a href="dashboard.php" class="dropdown-toggle no-arrow">
+                            <span class="micon fa fa-chart-line"></span><span class="mtext">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chat.php" class="dropdown-toggle no-arrow">
+                            <span class="micon fa fa-comment-dots"></span><span class="mtext">Chat</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="calender.php" class="dropdown-toggle no-arrow">
+                            <span class="micon fa fa-calendar-days"></span><span class="mtext">Calender</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="events.php" class="dropdown-toggle no-arrow">
+                            <span class="micon fa fa-brands fa-fort-awesome"></span><span class="mtext">Events</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="user-management.php" class="dropdown-toggle no-arrow">
+                            <span class="micon fa fa-solid fa-users"></span><span class="mtext">User Management</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
+    <div class="main-container">
+        <div class="bg-white p-4">
+
+            <h1>Customer Support Tickets</h1>
+            <div class="filter-section pt-4">
+                <input id="searchBar" type="text" placeholder="Search tickets..." class="form-control">
+                <select id="statusFilter" class="form-select">
+                    <option value="all">All</option>
+                    <option value="open">Open</option>
+                    <option value="pending">Pending</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+                <select id="issueTypeFilter" class="form-select">
+                    <option value="all">All Issues</option>
+                    <option value="Issue with payment">Issue with Payment</option>
+                    <option value="Issue with account">Issue with Account</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div id="ticketsContainer">
+                <?php while ($row = $result->fetch_assoc()) { ?>
+                    <div class="ticket" data-status="<?php echo $row['status']; ?>"
+                        data-issue="<?php echo htmlspecialchars($row['subject']); ?>"
+                        data-message="<?php echo htmlspecialchars($row['message']); ?>"
+                        data-name="<?php echo htmlspecialchars($row['fname'] . ' ' . $row['lname']); ?>"
+                        onclick="openDialog(this)">
+                        <h5><?php echo htmlspecialchars($row['subject']); ?></h5>
+                        <p class="name">Name: <?php echo htmlspecialchars($row['fname'] . ' ' . $row['lname']); ?></p>
+                        <p>Status: <span class="status <?php echo $row['status']; ?>"><?php echo $row['status']; ?></span>
+                        </p>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Modal -->
     <div class="modal fade" id="dialogBox" tabindex="-1" aria-labelledby="dialogTitle" aria-hidden="true">
@@ -121,7 +120,8 @@ $result = $stmt->get_result();
                     </div>
                     <form>
                         <div class="mb-3">
-                            <textarea class="form-control" id="adminReply" rows="3" placeholder="Type your message here..."></textarea>
+                            <textarea class="form-control" id="adminReply" rows="3"
+                                placeholder="Type your message here..."></textarea>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="sendReply()">Send</button>
                     </form>
@@ -132,7 +132,8 @@ $result = $stmt->get_result();
                             <option value="pending">Pending</option>
                             <option value="resolved">Resolved</option>
                         </select>
-                        <button type="button" class="btn btn-success mt-2" onclick="confirmStatusUpdate()">Confirm</button>
+                        <button type="button" class="btn btn-success mt-2"
+                            onclick="confirmStatusUpdate()">Confirm</button>
                     </div>
                 </div>
             </div>
@@ -200,4 +201,5 @@ $result = $stmt->get_result();
         }
     </script>
 </body>
+
 </html>
