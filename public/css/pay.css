@@ -75,10 +75,39 @@ body {
   outline: none; /* Remove focus outline */
 }
 
-.seat.selected {
-  background-color: #f4c140;
+
+.seat.sold {
+  background-color: rgb(187, 186, 186) !important;
+  cursor: not-allowed;
 }
 
+.seat.sold:hover {
+  background-color: rgb(187, 186, 186) !important;
+  cursor: not-allowed;
+}
+/* Add this to your existing CSS file to make the selected seats orange */
+.seat.selected {
+  background-color: orange !important; /* Changes background to orange */
+  border: 2px solid darkorange; /* Optionally add a border for better visibility */
+  color: white; /* Optionally change the text color to white if there’s any text */
+}
+
+/* Optionally, add hover effects to the selected seat for better interaction */
+.seat.selected:hover {
+  background-color: darkorange;
+}
+.seat.no-ticket {
+  background-color: rgb(187, 186, 186); /* Gray color for no-ticket seats */
+  cursor: not-allowed; /* Disable cursor on no-ticket seats */
+  pointer-events: none; /* Disable clicking on no-ticket seats */
+}
+
+/* Style for disabled seats (if any) */
+.seat.disabled {
+  background-color: rgb(187, 186, 186); /* Light gray for disabled seats */
+  cursor: not-allowed; /* Disable cursor */
+  pointer-events: none; /* Disable clicking */
+}
 .seat[data-tooltip]:hover::after {
   content: attr(data-tooltip); /* Get the tooltip text from data-tooltip */
   position: absolute;
@@ -503,13 +532,14 @@ button {
 }
 
 .Payment {
-  display: none; /* Initially hidden */
+  display: block;
   width: 90%;
   height: 110vh;
   padding: 2rem;
   background: white;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  translate: 2rem 3.5rem;
 }
 
 .payment-header {

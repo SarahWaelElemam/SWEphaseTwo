@@ -171,72 +171,107 @@ function openModal(ticketType, ticketPrice, ticketId) {
     }
 
     function confirmPurchase(directTicketType = null, directTicketPrice = null, directTicketId = null) {
-    let ticketType, ticketPrice, ticketId, ticketCount;
-    
-    const modal = document.getElementById('ticketModal');
-    
-    // Check if we're coming from the modal or direct button click
-    if (directTicketType === null) {
-        // Coming from modal
-        ticketType = modal.dataset.ticketType;
-        ticketPrice = modal.dataset.ticketPrice;
-        ticketId = modal.dataset.ticketId;
-        ticketCount = document.getElementById('ticketCount').value;
-    } else {
-        // Coming from direct button click
-        ticketType = directTicketType;
-        ticketPrice = directTicketPrice;
-        ticketId = directTicketId;
-        ticketCount = "0"; // Default for direct purchase
+        let ticketType, ticketPrice, ticketId, ticketCount;
+        
+        const modal = document.getElementById('ticketModal');
+        
+        // Check if we're coming from the modal or direct button click
+        if (directTicketType === null) {
+            // Coming from modal
+            ticketType = modal.dataset.ticketType;
+            ticketPrice = modal.dataset.ticketPrice;
+            ticketId = modal.dataset.ticketId;
+            ticketCount = document.getElementById('ticketCount').value;
+        } else {
+            // Coming from direct button click
+            ticketType = directTicketType;
+            ticketPrice = directTicketPrice;
+            ticketId = directTicketId;
+            ticketCount = "0"; // Default for direct purchase
+        }
+
+        // Determine the action based on the Category
+        const category = '<?php echo htmlspecialchars($_POST["Category"]); ?>';
+
+        if (category === 'Concert') {
+            // Proceed with pay.php
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'concert.php';
+
+            // Add all the event data that was passed from Events.php
+            const eventData = {
+                event_id: '<?php echo htmlspecialchars($_POST["event_id"]); ?>',
+                name: '<?php echo htmlspecialchars(addslashes($_POST["name"])); ?>',
+                location: '<?php echo htmlspecialchars(addslashes($_POST["location"])); ?>',
+                date: '<?php echo htmlspecialchars($_POST["date"]); ?>',
+                time: '<?php echo htmlspecialchars($_POST["time"]); ?>',
+                Category: '<?php echo htmlspecialchars($_POST["Category"]); ?>',
+                organizer_image: '<?php echo htmlspecialchars($_POST["organizer_image"]); ?>',
+                image: '<?php echo htmlspecialchars($_POST["image"]); ?>',
+            };
+
+            // Add event data to form
+            for (const [key, value] of Object.entries(eventData)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            }
+
+            // Add ticket data to form
+            const ticketData = {
+                ticket_id: ticketId,
+                ticket_type: ticketType,
+                ticket_price: ticketPrice,
+                ticket_count: ticketCount
+            };
+
+            for (const [key, value] of Object.entries(ticketData)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            }
+
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+        } else {
+            // Proceed with pay.php
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'pay.php';
+
+            // Add all the event data that was passed from Events.php
+            const eventData = {
+                event_id: '<?php echo htmlspecialchars($_POST["event_id"]); ?>',
+                name: '<?php echo htmlspecialchars(addslashes($_POST["name"])); ?>',
+                location: '<?php echo htmlspecialchars(addslashes($_POST["location"])); ?>',
+                date: '<?php echo htmlspecialchars($_POST["date"]); ?>',
+                time: '<?php echo htmlspecialchars($_POST["time"]); ?>',
+                Category: '<?php echo htmlspecialchars($_POST["Category"]); ?>',
+                organizer_image: '<?php echo htmlspecialchars($_POST["organizer_image"]); ?>',
+                image: '<?php echo htmlspecialchars($_POST["image"]); ?>',
+            };
+
+            // Add event data to form
+            for (const [key, value] of Object.entries(eventData)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                form.appendChild(input);
+            }
+
+
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
-
-    // Create a form to submit the data
-    const form = document.createElement('form');
-form.method = 'POST';
-form.action = 'pay.php';
-
-    // Add all the event data that was passed from Events.php
-    const eventData = {
-        event_id: '<?php echo htmlspecialchars($_POST["event_id"]); ?>',
-        name: '<?php echo htmlspecialchars(addslashes($_POST["name"])); ?>',
-        location: '<?php echo htmlspecialchars(addslashes($_POST["location"])); ?>',
-        date: '<?php echo htmlspecialchars($_POST["date"]); ?>',
-        time: '<?php echo htmlspecialchars($_POST["time"]); ?>',
-        Category: '<?php echo htmlspecialchars($_POST["Category"]); ?>',
-        organizer_image: '<?php echo htmlspecialchars($_POST["organizer_image"]); ?>',
-        image: '<?php echo htmlspecialchars($_POST["image"]); ?>',
-    };
-
-    // Add event data to form
-    for (const [key, value] of Object.entries(eventData)) {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = value;
-    form.appendChild(input);
-}
-
-    // Add ticket data to form
-    const ticketData = {
-        ticket_id: ticketId,
-        ticket_type: ticketType,
-        ticket_price: ticketPrice,
-        ticket_count: ticketCount
-    };
-
-    for (const [key, value] of Object.entries(ticketData)) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-    }
-
-    // Submit the form
-    document.body.appendChild(form);
-    console.log(eventData.image);
-    form.submit();
-}
     function scrollToTicketSection() {
         const ticketSection = document.getElementById('ticket-section');
         ticketSection.scrollIntoView({
