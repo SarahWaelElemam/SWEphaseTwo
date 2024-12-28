@@ -12,10 +12,138 @@
   </head>
 
   <body>
-    <?php
+  <?php
       // Include any PHP for session handling, database connection, etc.
       // session_start();
-      // require 'path/to/database/connection.php';
+      require_once("../../db/Dbh.php");
+
+      require_once '../../model/Eventsdb.php';
+        require_once '../../model/Organizer.php';
+        require_once '../../model/Admin.php';   
+
+      // Database connection
+      $dbh = new Dbh();
+      $conn = $dbh->getConn();
+      $admin = new Admin($conn);
+
+      $eventsDb = new Eventsdb($conn);
+
+     
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateStatus'])) {
+    $eventId = $_POST['eventId'];
+    $newStatus = $_POST['viewEventStatus'];
+
+    if ($admin->updateEventStatus($eventId, $newStatus)) {
+        $message = "Event status updated successfully.";
+    } else {
+        $message = "Failed to update event status. Please try again.";
+    }
+}
+
+
+
+
+
+
+
+// if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventId'])) { 
+//     // Collect form data
+//     $eventId = $_POST['eventId'];
+//     $eventName = isset($_POST['editEventName']) ? $_POST['editEventName'] : null;  
+//     $eventDescription = isset($_POST['editEventDescription']) ? $_POST['editEventDescription'] : null;  
+//     $eventType = isset($_POST['editEventType']) ? $_POST['editEventType'] : null;  
+//     $organizerName = isset($_POST['editOrganizerName']) ? $_POST['editOrganizerName'] : null;  
+//     $startDate = isset($_POST['editStartDate']) ? $_POST['editStartDate'] : null;  
+//     $endDate = isset($_POST['editEndDate']) ? $_POST['editEndDate'] : null;  
+//     $venue = isset($_POST['editVenue']) ? $_POST['editVenue'] : null;  
+//     $venueAddress = isset($_POST['editAddress']) ? $_POST['editAddress'] : null;  
+//     $venueMapLink = isset($_POST['editVenueMapLink']) ? $_POST['editVenueMapLink'] : null;  
+//     $venueProfileLink = isset($_POST['editVenueProfileLink']) ? $_POST['editVenueProfileLink'] : null;  
+
+//     // Initialize venueFacilitiesString
+//     $venueFacilitiesString = ''; 
+//     if (isset($_POST['editVenueFacilities']) && is_array($_POST['editVenueFacilities'])) {
+//         foreach ($_POST['editVenueFacilities'] as $facility) {
+//             $facility = htmlspecialchars($facility); // Sanitize input
+//             $venueFacilitiesString .= $facility . ', '; // Concatenate facilities
+//         }
+//         $venueFacilitiesString = rtrim($venueFacilitiesString, ','); // Remove trailing comma
+//     }
+   
+    
+//     // Check if new photos are uploaded
+//     $eventImage = isset($_FILES['editEventImage']) && $_FILES['editEventImage']['error'] === UPLOAD_ERR_OK 
+//         ? file_get_contents($_FILES['editEventImage']['tmp_name']) : null;
+//     $venueImage = isset($_FILES['editVenueImage']) && $_FILES['editVenueImage']['error'] === UPLOAD_ERR_OK 
+//         ? file_get_contents($_FILES['editVenueImage']['tmp_name']) : null;
+//     $organizerLogo = isset($_FILES['editOrganizerLogo']) && $_FILES['editOrganizerLogo']['error'] === UPLOAD_ERR_OK 
+//         ? file_get_contents($_FILES['editOrganizerLogo']['tmp_name']) : null;
+
+//     // Get the created by user (this could come from session or other mechanism)
+//     $createdBy = 1; // Example from session
+
+//     // Perform the update action, only update photos if new ones are uploaded
+//     $success = $organizer->updateEvent(
+//         $eventId,
+//         $eventName,
+//         $eventDescription,
+//         $eventType,
+//         $createdBy, 
+//         $organizerName,
+//         $startDate,
+//         $endDate,
+//         $venue,
+//         $venueAddress,
+//         $venueMapLink,
+//         $venueFacilitiesString,
+//         $venueProfileLink,
+       
+//         $eventImage,  // This will be null if no new image uploaded
+//         $venueImage,  // This will be null if no new image uploaded
+//         $organizerLogo // This will be null if no new image uploaded
+//     );
+
+//     if ($success) {
+//         echo "Event updated successfully!";
+//     } else {
+//         echo "Failed to update event.";
+//     }
+// }
+
+
+if (isset($_GET['delete_event_id'])) {
+    $eventId = intval($_GET['delete_event_id']);
+
+    try {
+        $success = $organizer->deleteEvent($eventId);
+
+        if ($success) {
+            $message = "Event deleted successfully!";
+        } else {
+            $error = "Event not found or could not be deleted.";
+        }
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+    }
+}
+
+
+if (isset($_GET['eventId']) && is_numeric($_GET['eventId'])) {
+    $eventId = (int)$_GET['eventId'];
+    $eventToEdit = $eventsDb->getEventById($eventId);
+
+    if (!$eventToEdit) {
+        echo "Event not found.";
+        exit;
+    }
+}
+
+
+
+      // Fetch all events to display
+$events = $eventsDb->getAllEvents();
+
+
     ?>
 
     <!-- Sidebar -->
@@ -36,296 +164,231 @@
     <!-- Main Content -->
     <div class="main-content">
       <!-- Dashboard page -->
-     
+      <?php if (isset($message)): ?>
+        <p><?php echo htmlspecialchars($message); ?></p>
+    <?php endif; ?>
 <!-- Event Management Page -->
 <div id="events-page" class="page hidden">
     <header>
         <h1>Event Management</h1>
     </header>
 
-  <!-- Add Event Modal -->
-<div id="addEventModal" class="modal-overlay">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closeModals('addEventModal')">&times;</span>
-        <h2>Add New Event</h2>
-        <form id="eventForm" onsubmit="return handleAddEvent(event)">
-
-            <!-- Event Details Section -->
-            <h3>Event Details</h3>
-            <div class="input-group">
-                <label for="eventName">Event Name:</label>
-                <input type="text" id="eventName" name="eventName" required>
-                <div class="error-message" id="eventNameError"></div>
-            </div>
-            <div class="input-group">
-                <label for="eventDescription">Description:</label>
-                <textarea id="eventDescription" name="eventDescription"></textarea>
-                <div class="error-message" id="eventDescriptionError"></div>
-            </div>
-            <div class="input-group">
-                <label>Type of Event:</label>
-                <label><input type="radio" name="eventType" value="Theatre" required> Theatre</label>
-                <label><input type="radio" name="eventType" value="concert"> Concert</label>
-                <label><input type="radio" name="eventType" value="exhibition"> Exhibition</label>
-                <div class="error-message" id="eventTypeError"></div>
-            </div>
-          <!-- Event Image Upload -->
-            <div class="input-group">
-                <label for="eventImage">Event Image:</label>
-                <input type="file" id="eventImage" name="eventImage" accept="image/*">
-                <div class="error-message" id="eventImageError"></div>
-            </div>
-
-            <!-- Location Section -->
-            <h3>Location</h3>
-            
-          
-            <div class="input-group">
-                <label for="venue">Venue Name:</label>
-                <input type="text" id="venue" name="venue">
-                <div class="error-message" id="venueError"></div>
-            </div>
-            <div class="input-group">
-                <label for="address">Address:</label>
-                <input type="text" id="address" name="address">
-                <div class="error-message" id="addressError"></div>
-            </div>
-            <div class="input-group">
-                <label for="venueMapLink">Google Maps Link:</label>
-                <input type="text" id="venueMapLink" name="venueMapLink">
-                <div class="error-message" id="venueMapLinkError"></div>
-            </div>
-            <!-- Date and Time Section -->
-            <h3>Date and Time</h3>
-            <div class="input-group">
-                <label for="startDate">Start Date:</label>
-                <input type="datetime-local" id="startDate" name="startDate" required>
-                <div class="error-message" id="startDateError"></div>
-            </div>
-            <div class="input-group">
-                <label for="endDate">End Date (optional):</label>
-                <input type="datetime-local" id="endDate" name="endDate">
-                <div class="error-message" id="endDateError"></div>
-            </div>
-
-         <!-- Event Access and Ticket Section -->
-         <h3>Access & Tickets</h3>
-            <div id="ticketPriceContainer">
-            <h4>Ticket Prices</h4>
-    <button type="button" onclick="addTicketRow()">Add Ticket Type</button>
-    <div id="ticketRows"></div> 
-                
-            </div>
-
-            <!-- Organizer Section -->
-            <h3>Organizer Details</h3>
-            <div class="input-group">
-                <label for="createdBy">Organizer:</label>
-                <input type="text" id="createdBy" name="createdBy" required>
-                <div class="error-message" id="createdByError"></div>
-            </div>
-            <div class="input-group">
-                <label for="organizerName">Organizer Name:</label>
-                <input type="text" id="organizerName" name="organizerName">
-                <div class="error-message" id="organizerNameError"></div>
-            </div>
-          <!-- Organizer Logo Upload -->
-<div class="input-group">
-    <label for="organizerLogo">Organizer Logo:</label>
-    <input type="file" id="organizerLogo" name="organizerLogo" accept="image/*">
-    <div class="error-message" id="organizerLogoError"></div>
-</div>
-
-            <!-- Event Status and Recurrence Section -->
-            <h3>Status & Recurrence</h3>
-            <div class="input-group">
-                <label for="eventStatus">Event Status:</label>
-                <select id="eventStatus" name="eventStatus">
-                    <option value="Upcoming">Upcoming</option>
-                    <option value="Ongoing">Ongoing</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <div class="error-message" id="eventStatusError"></div>
-            </div>
-
-            <!-- Venue Facilities Section -->
-            <h3>Venue Facilities</h3>
-            <div class="input-group">
-                <label>Facilities Available:</label>
-                <label><input type="checkbox" name="venueFacilities" value="Bathrooms"> Bathrooms</label>
-                <label><input type="checkbox" name="venueFacilities" value="Food Services"> Food Services</label>
-                <label><input type="checkbox" name="venueFacilities" value="Parking"> Parking</label>
-                <label><input type="checkbox" name="venueFacilities" value="Security"> Security</label>
-                <div class="error-message" id="venueFacilitiesError"></div>
-            </div>
-            <div class="input-group">
-                <label for="venueProfileLink">Venue Profile Link:</label>
-                <input type="text" id="venueProfileLink" name="venueProfileLink">
-                <div class="error-message" id="venueProfileLinkError"></div>
-            </div>
-           
-           <!-- Venue Image Upload -->
-            <div class="input-group">
-                <label for="venueImage">Venue Image:</label>
-                <input type="file" id="venueImage" name="venueImage" accept="image/*">
-                <div class="error-message" id="venueImageError"></div>
-            </div>
-
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-</div>
+   
 
 <!-- Edit Event Modal -->
-<div id="editEventModal" class="modal-overlay">
-    <div class="modal-content">
-        <span class="modal-close" onclick="closeModals('editEventModal')">&times;</span>
-        <h2>Edit Event</h2>
-        <form id="editEventForm" onsubmit="return handleEditEvent(event)">
 
-            <!-- Event Details Section -->
-            <h3>Event Details</h3>
-            <input type="hidden" id="editEventId">
-            <div class="input-group">
-                <label for="editEventName">Event Name:</label>
-                <input type="text" id="editEventName" name="editEventName" required>
-                <div class="error-message" id="editEventNameError"></div>
-            </div>
-            <div class="input-group">
-                <label for="editEventDescription">Description:</label>
-                <textarea id="editEventDescription" name="editEventDescription"></textarea>
-                <div class="error-message" id="editEventDescriptionError"></div>
-            </div>
-            <div class="input-group">
-                <label>Type of Event:</label>
-                <label><input type="radio" name="editEventType" value="Theatre" required> Theatre</label>
-                <label><input type="radio" name="editEventType" value="Concert"> Concert</label>
-                <label><input type="radio" name="editEventType" value="Exhibition"> Exhibition</label>
-                <div class="error-message" id="editEventTypeError"></div>
-            </div>
+<div id="viewEventModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModals('viewEventModal')">&times;</span>
+    <h2>View Event</h2>
+    <form id="viewEventForm" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" enctype="multipart/form-data">
+    <!-- Hidden field for event ID -->
+      <input type="hidden" name="eventId" id="viewEventId">
+      
+      <!-- Event Details Section -->
+      <h3>Event Details</h3>
+      <div class="input-group">
+        <label for="viewEventName">Event Name:</label>
+        <input type="text" id="viewEventName" name="viewEventName" readonly>
+      </div>
+      <div class="input-group">
+        <label for="viewEventDescription">Description:</label>
+        <textarea id="viewEventDescription" name="viewEventDescription" readonly></textarea>
+      </div>
+      <div class="input-group">
+        <label>Type of Event:</label>
+        <label><input type="radio" name="viewEventType" value="Theatre" disabled> Theatre</label>
+        <label><input type="radio" name="viewEventType" value="Concert" disabled> Concert</label>
+        <label><input type="radio" name="viewEventType" value="Exhibition" disabled> Exhibition</label>
+      </div>
 
-            <!-- Event Image Upload -->
-            <div class="input-group">
-                <label for="editEventImage">Event Image:</label>
-                <input type="file" id="editEventImage" name="editEventImage" accept="image/*">
-                <div class="error-message" id="editEventImageError"></div>
-            </div>
+      <!-- Event Status Section -->
+      <h3>Status</h3>
+  <div class="input-group">
+    <label for="viewEventStatus">Change Status:</label>
+    <select id="viewEventStatus" name="viewEventStatus">
+    <option value="Pending">Pending</option>
+    <option value="Accepted">Accepted</option>
+    <option value="Rejected">Rejected</option>
+    <!-- Add other options as necessary -->
+</select>
+  </div>
 
-            <!-- Location Section -->
-            <h3>Location</h3>
-            <div class="input-group">
-                <label for="editVenue">Venue Name:</label>
-                <input type="text" id="editVenue" name="editVenue">
-                <div class="error-message" id="editVenueError"></div>
-            </div>
-            <div class="input-group">
-                <label for="editAddress">Address:</label>
-                <input type="text" id="editAddress" name="editAddress">
-                <div class="error-message" id="editAddressError"></div>
-            </div>
-            <div class="input-group">
-                <label for="editVenueMapLink">Google Maps Link:</label>
-                <input type="text" id="editVenueMapLink" name="editVenueMapLink">
-                <div class="error-message" id="editVenueMapLinkError"></div>
-            </div>
+      <!-- Location Section -->
+      <h3>Location</h3>
+      <div class="input-group">
+        <label for="viewVenue">Venue Name:</label>
+        <input type="text" id="viewVenue" name="viewVenue" readonly>
+      </div>
+      <div class="input-group">
+        <label for="viewAddress">Address:</label>
+        <input type="text" id="viewAddress" name="viewAddress" readonly>
+      </div>
+      <div class="input-group">
+        <label for="viewVenueMapLink">Google Maps Link:</label>
+        <input type="text" id="viewVenueMapLink" name="viewVenueMapLink" readonly>
+      </div>
 
-            <!-- Date and Time Section -->
-            <h3>Date and Time</h3>
-            <div class="input-group">
-                <label for="editStartDate">Start Date:</label>
-                <input type="datetime-local" id="editStartDate" name="editStartDate" required>
-                <div class="error-message" id="editStartDateError"></div>
-            </div>
-            <div class="input-group">
-                <label for="editEndDate">End Date (optional):</label>
-                <input type="datetime-local" id="editEndDate" name="editEndDate">
-                <div class="error-message" id="editEndDateError"></div>
-            </div>
+      <!-- Date and Time Section -->
+      <h3>Date and Time</h3>
+      <div class="input-group">
+        <label for="viewStartDate">Start Date:</label>
+        <input type="datetime-local" id="viewStartDate" name="viewStartDate" readonly>
+      </div>
+      <div class="input-group">
+        <label for="viewEndDate">End Date (optional):</label>
+        <input type="datetime-local" id="viewEndDate" name="viewEndDate" readonly>
+      </div>
 
-            <!-- Ticket Section -->
-            <h3>Access & Tickets</h3>
-            <div id="editTicketPriceContainer">
-                <h4>Ticket Prices</h4>
-                <button type="button" onclick="edit_addTicketRow()">Add Ticket Type</button>
-                <div id="editTicketRows"></div>
-            </div>
+      <!-- Organizer Section -->
+      <h3>Organizer Details</h3>
+      <div class="input-group">
+        <label for="viewOrganizerName">Organizer Name:</label>
+        <input type="text" id="viewOrganizerName" name="viewOrganizerName" readonly>
+      </div>
 
-            <!-- Organizer Section -->
-            <h3>Organizer Details</h3>
-            
-            <div class="input-group">
-                <label for="editOrganizerName">Organizer Name:</label>
-                <input type="text" id="editOrganizerName" name="editOrganizerName">
-                <div class="error-message" id="editOrganizerNameError"></div>
-            </div>
-            <div class="input-group">
-                <label for="editOrganizerLogo">Organizer Logo:</label>
-                <input type="file" id="editOrganizerLogo" name="editOrganizerLogo" accept="image/*">
-                <div class="error-message" id="editOrganizerLogoError"></div>
-            </div>
-           
-
-            <!-- Event Status Section -->
-            <h3>Status</h3>
-            <div class="input-group">
-                <label for="editEventStatus">Event Status:</label>
-                <select id="editEventStatus" name="editEventStatus">
-                    <option value="Upcoming">Upcoming</option>
-                    <option value="Ongoing">Ongoing</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <div class="error-message" id="editEventStatusError"></div>
-            </div>
-
-            <!-- Venue Facilities Section -->
-            <h3>Venue Facilities</h3>
-            <div class="input-group">
-                <label>Facilities Available:</label>
-                <label><input type="checkbox" name="editVenueFacilities" value="Bathrooms"> Bathrooms</label>
-                <label><input type="checkbox" name="editVenueFacilities" value="Food Services"> Food Services</label>
-                <label><input type="checkbox" name="editVenueFacilities" value="Parking"> Parking</label>
-                <label><input type="checkbox" name="editVenueFacilities" value="Security"> Security</label>
-                <div class="error-message" id="editVenueFacilitiesError"></div>
-            </div>
-            <div class="input-group">
-    <label for="editVenueProfileLink">Venue Profile Link:</label>
-    <input type="text" id="editVenueProfileLink" name="editVenueProfileLink">
-    <div class="error-message" id="editVenueProfileLinkError"></div>
-</div>
-<!-- Venue Image Upload -->
-<div class="input-group">
-    <label for="editVenueImage">Venue Image:</label>
-    <input type="file" id="editVenueImage" name="editVenueImage" accept="image/*">
-    <div class="error-message" id="editVenueImageError"></div>
-</div>
-<button type="submit">Save Changes</button>
-        </form>
-    </div>
+      <!-- Venue Facilities -->
+      <h3>Venue Facilities</h3>
+      <div class="input-group">
+        <label>Facilities Available:</label>
+        <label><input type="checkbox" name="viewVenueFacilities[]" value="Bathrooms" disabled> Bathrooms</label>
+        <label><input type="checkbox" name="viewVenueFacilities[]" value="Food Services" disabled> Food Services</label>
+        <label><input type="checkbox" name="viewVenueFacilities[]" value="Parking" disabled> Parking</label>
+        <label><input type="checkbox" name="viewVenueFacilities[]" value="Security" disabled> Security</label>
+      </div>
+      <div class="input-group">
+        <label for="viewVenueProfileLink">Venue Profile Link:</label>
+        <input type="text" id="viewVenueProfileLink" name="viewVenueProfileLink" readonly>
+      </div>
+        <!-- Submit Button -->
+  <div class="input-group">
+    <button type="submit" name="updateStatus">Update Status</button>
+  </div>
+    </form>
+  </div>
 </div>
 
     <!-- Events Table -->
     <h2>Events List</h2>
-    <table class="common-table-style events-table">
-        <thead>
-            <tr>
-        <th>ID</th>
-        <th>Event Name</th>
-        <th>Date</th>
-        <th>Address</th>
-        <th>Event Type</th>
-        <th>Organizer</th>
-        <th>Status</th>
-        <th>Event Image</th>
-        <th>Organizer Logo</th>
-        <th>Venue Image</th>
-            
+ <table class="common-table-style events-table">
+    <thead>
+        <tr>
+            <th>Event ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Organizer</th>
+            <th>Dates</th>
+            <th>Venue</th>
+            <th>Created</th>
+            <th>Links</th> <!-- New Status Column -->
+
+            <th>Status</th> <!-- New Status Column -->
+
+            <th>Actions</th>
            
-                <th><button class="buttonadd" id="addEventBtn">Add Event</button></th>
+        </tr>
+    </thead>
+    <tbody id="eventsTableBody">
+        <?php foreach ($events as $event): ?>
+
+            <?php
+                // Determine the class based on the event's status
+                $statusClass = '';
+                $statusText = '';
+                if ($event['status'] == 'Pending') {
+                    $statusClass = 'pending-status';  // Yellow
+                    $statusText = 'Pending';
+                } elseif ($event['status'] == 'Rejected') {
+                    $statusClass = 'rejected-status';  // Red
+                    $statusText = 'Rejectedss';
+                } elseif ($event['status'] == 'Accepted') {
+                    $statusClass = 'accepted-status';  // Green
+                    $statusText = 'Accepted';
+                }
+            ?>
+            
+            <tr class="event-row">
+            
+                <td><?php echo htmlspecialchars($event['Event_ID']); ?></td>
+                <td><?php echo htmlspecialchars($event['Name']); ?></td>
+                <td><?php echo htmlspecialchars($event['Description']); ?></td>
+                <td>
+                    <span class="category-badge <?php echo strtolower($event['Category']); ?>">
+                        <?php echo htmlspecialchars($event['Category']); ?>
+                    </span>
+                </td>
+                <td><?php echo htmlspecialchars($event['Organizer_Name']); ?></td>
+                <td>
+                    <div class="date-info">
+                        <div>Start: <?php echo date('Y-m-d H:i', strtotime($event['Start_Date'])); ?></div>
+                        <?php if (!empty($event['End_Date'])): ?>
+                            <div>End: <?php echo date('Y-m-d H:i', strtotime($event['End_Date'])); ?></div>
+                        <?php endif; ?>
+                    </div>
+                </td>
+                <td>
+                    <div><?php echo htmlspecialchars($event['Venue']); ?></div>
+                    <?php if (!empty($event['Address'])): ?>
+                        <div class="address"><?php echo htmlspecialchars($event['Address']); ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($event['Venue_Facilities'])): ?>
+                        <div class="facilities">
+                            Facilities: <?php echo htmlspecialchars($event['Venue_Facilities']); ?>
+                        </div>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <div>Created: <?php echo date('Y-m-d', strtotime($event['Created_At'])); ?></div>
+                    <div>Updated: <?php echo date('Y-m-d', strtotime($event['Updated_At'])); ?></div>
+                </td>
+                <td class="actions-cell">
+                    <?php if (!empty($event['Venue_Map_Link'])): ?>
+                        <a href="<?php echo htmlspecialchars($event['Venue_Map_Link']); ?>" target="_blank" class="link-button">Map</a>
+                    <?php endif; ?>
+                    <?php if (!empty($event['Venue_Profile_Link'])): ?>
+                        <a href="<?php echo htmlspecialchars($event['Venue_Profile_Link']); ?>" target="_blank" class="link-button">Venue Profile</a>
+                    <?php endif; ?>
+                </td>
+                <td class="status-column">
+                    <?php 
+                        // Define inline styles for the status badge
+                        $statusStyle = '';
+                        $statusText = '';
+                        if ($event['status'] == 'Pending') {
+                            $statusStyle = 'background-color: #ffeb3b; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Pending';
+                        } elseif ($event['status'] == 'Rejected') {
+                            $statusStyle = 'background-color: #f44336; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Rejected';
+                        } elseif ($event['status'] == 'Accepted') {
+                            $statusStyle = 'background-color: #4caf50; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Accepted';
+                        } else {
+                            $statusStyle = 'background-color: #9e9e9e; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Unknown';
+                        }
+                    ?>
+                    <span style="<?php echo $statusStyle; ?>"><?php echo $statusText; ?></span>
+                </td>
+                <td class="action-icons">
+                    <?php
+                        $eventData = $event;
+                        unset($eventData['Image']);
+                        unset($eventData['Venue_Image']);
+                        unset($eventData['Organizer_Logo']);
+                    ?>
+                    <button class="edit-btn" onclick='openViewEventModal(<?php echo json_encode($eventData); ?>)'>
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="delete-icon" onclick="deleteEvent(<?php echo htmlspecialchars($event['Event_ID']); ?>)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
             </tr>
-        </thead>
-        <tbody id="eventsTableBody">
-        </tbody>
-    </table>
+        <?php endforeach; ?>
+    </tbody>
+</table>
 </div>
 
         <!-- User Management Page -->
@@ -455,303 +518,147 @@
             </button>
           </div>
         </div>
-      </div>
+</div>
     </div>
-    </div>
+   
 
     <script>
 
-const events = [
-    {
-        id: 1,
-        eventName: "Tech Conference 2024",
-        eventDescription: "A conference for tech enthusiasts to share knowledge and network.",
-        startDate: "2024-05-15T10:00:00Z",
-        eventType: "Theatre",
-        address: "Convention Center, Cityville",
-        venue: "City Convention Center",
-        eventImage: "../images/eventMemo.png", // Placeholder for an actual image file
-        organizer: {
-            name: "Tech Innovations Inc.",
-            logo: "../images/organizerslogo.png" // Placeholder for an actual logo file
-        },
-        ticketPrice: [ // Changed to an array of ticket objects
-            { type: "General Admission", price: 100, currency: "EGP" },
-            { type: "VIP Admission", price: 200, currency: "EGP" }],
-        eventStatus: "Upcoming",
-        attendees: [],
-        venueDetails: {
-            facilities: ["Bathrooms", "Food Services", "Parking"],
-            links: {
-                venueProfile: "http://venueprofile.com",
-                maps: "http://mapslink.com"
-            },
-            venueImage: "../images/Venue.png"// Placeholder for an actual venue image file
+
+
+
+
+
+
+function openViewEventModal(eventData) {
+    console.log("Event data:", eventData); // Log the raw data passed to the function
+    console.log("Status from event data:", eventData.status); // Debugging
+
+
+    try {
+        // Ensure the eventData object is populated with the expected keys
+        document.getElementById('viewEventId').value = eventData.Event_ID || '';
+        document.getElementById('viewEventName').value = eventData.Name || '';
+        document.getElementById('viewEventDescription').value = eventData.Description || '';
+
+        // Set radio buttons for event type (Category)
+        const eventTypeRadios = document.getElementsByName('viewEventType');
+        eventTypeRadios.forEach((radio) => {
+            if (radio.value === eventData.Category) {
+                radio.checked = true;
+            }
+        });
+
+        // Populate the venue fields
+        document.getElementById('viewVenue').value = eventData.Venue || '';
+        document.getElementById('viewAddress').value = eventData.Address || '';
+        document.getElementById('viewVenueMapLink').value = eventData.Venue_Map_Link || '';
+        document.getElementById('viewStartDate').value = eventData.Start_Date || '';
+        document.getElementById('viewEndDate').value = eventData.End_Date || '';
+        
+        // Organizer details
+        document.getElementById('viewOrganizerName').value = eventData.Organizer_Name || '';
+
+        // Check and populate the venue facilities if they exist
+        const venueFacilities = eventData.Venue_Facilities ? eventData.Venue_Facilities.split(', ') : [];
+        const facilityCheckboxes = document.getElementsByName('viewVenueFacilities[]');
+        facilityCheckboxes.forEach(function(checkbox) {
+            checkbox.checked = venueFacilities.includes(checkbox.value);
+        });
+
+        // Set the Venue Profile Link (if available)
+        document.getElementById('viewVenueProfileLink').value = eventData.Venue_Profile_Link || '';
+        const statusDropdown = document.getElementById('viewEventStatus');
+        if (statusDropdown) {
+            statusDropdown.value = eventData.status || 'Pending'; // Default to 'Pending' if no status is found
         }
-    },
-    {
-        id: 2,
-        eventName: "Art Exhibition 2024",
-        eventDescription: "An exhibition showcasing contemporary art from local artists.",
-        startDate: "2024-06-20T18:00:00Z",
-        eventType: "Exhibition",
-        address: "Gallery XYZ, Art District",
-        venue: "Gallery XYZ",
-        eventImage: "../images/eventsoundandlightjpg.jpg", // Placeholder for an actual image file
-        organizer: {
-            name: "Art Community",
-            logo: "../images/soundandlightorglogo.png" // Placeholder for an actual logo file
-        },
-        ticketPrice: [ // Changed to an array of ticket objects
-            { type: "General Admission", price: 100, currency: "EGP" },
-            { type: "VIP Admission", price: 200, currency: "EGP" }],
-        eventStatus: "Upcoming",
-        attendees: [],
-        venueDetails: {
-            facilities: ["Restrooms", "Café", "Gift Shop"],
-            links: {
-                venueProfile: "http://galleryxyz.com",
-                maps: "http://gallerymap.com"
-            },
-            venueImage: "../images/eventsoundandlightjpg.jpg", // Placeholder for an actual venue image file
+        // Display event image from blob
+        const eventImageBlob = eventData.Image; // Assuming eventData.ImageBlob is the blob
+        const eventImage = document.getElementById('viewEventImage');
+        if (eventImageBlob) {
+            eventImage.src = URL.createObjectURL(eventImageBlob);
+        } else {
+            eventImage.src = ''; // Use a placeholder if no blob is provided
         }
-    }
+
+        // Display venue image from blob
+        const venueImageBlob = eventData.VenueImageBlob; // Assuming eventData.VenueImageBlob is the blob
+        const venueImage = document.getElementById('viewVenueImage');
+        if (venueImageBlob) {
+            venueImage.src = URL.createObjectURL(venueImageBlob);
+        } else {
+            venueImage.src = ''; // Use a placeholder if no blob is provided
+        }
+   // Directly set the status dropdown value
    
-];
 
-// Function to render events table with all attributes 
-function renderEvents() {
-    const tbody = document.getElementById('eventsTableBody');
-    tbody.innerHTML = '';
-
-    events.forEach(event => {
-        const tr = document.createElement('tr');
-        
-
-
-        tr.innerHTML = `
-            <td>${event.id}</td>
-            <td>${event.eventName}</td>
-           ${new Date(event.startDate).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: 'UTC'  // Set timezone to UTC
-    })}</td> <!-- Formatting the date -->
-            <td>${event.address}</td>
-            <td>${event.eventType}</td>
-            <td>${event.organizer.name}</td>
-            <td>${event.eventStatus}</td>
-            <td>
-                <img src="${event.eventImage}" alt="${event.eventName} image" class="event-image" />
-            </td>
-            <td>
-                <img src="${event.organizer.logo}" alt="${event.organizer.name} image" class="event-image">
-            </td>
-             <td>
-                <img src="${event.venueDetails.venueImage}" alt=${event.eventName} image" class="event-image">
-            </td>
-            <td class="action-icons">
-                <button class="edit-btn" onclick="openEditEventModal(${event.id})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="delete-icon" onclick="deleteEvent(${event.id})">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
+        console.log(statusDropdown);
+        // Show the modal if needed
+        document.getElementById('viewEventModal').style.display = 'block';
+    } catch (error) {
+        console.error("Error parsing event data:", error);
+    }
+    openModal('viewEventModal');
 }
 
-function handleAddEvent(event) {
-    event.preventDefault();
-    console.log("here in add event");
-    
-    if (!validateEventForm()) return;
-    console.log("here after validation event");
+function openEditEventModal(eventData) {
+    console.log("Event data:", eventData); // Log the raw data passed to the function
+    console.log("Venue_Profile_Link:", eventData.Venue_Profile_Link);
+    console.log("Venue_Facilities:", eventData.Venue_Facilities);
+    try {
 
-    // Check if elements exist before accessing their values
-    const eventNameElement = document.getElementById('eventName');
-    const eventDescriptionElement = document.getElementById('eventDescription');
-    const startDateElement = document.getElementById('startDate');
-   const addressElement = document.getElementById('address')
-    const venueElement = document.getElementById('venue');
-    const organizerNameElement = document.getElementById('organizerName');
-    const eventImageElement = document.getElementById('eventImage');
-    const organizerLogoElement = document.getElementById('organizerLogo');
-    const venueImageElement = document.getElementById('venueImage');
-    const eventStatusElement = document.getElementById('eventStatus');
-    
-    // Check for null elements and log errors
-    if (!eventNameElement || !eventDescriptionElement || !startDateElement || 
-         !venueElement || !organizerNameElement || 
-        !eventImageElement || !organizerLogoElement || 
-        !venueImageElement || !eventStatusElement) {
+        // Ensure the eventData object is populated with the expected keys
+        document.getElementById('editEventId').value = eventData.Event_ID || '';  // Handle undefined or missing data
+        document.getElementById('editEventName').value = eventData.Name || '';
+        document.getElementById('editEventDescription').value = eventData.Description || '';
         
-        console.error("One or more elements are null, please check your IDs");
-        
-        if (!eventNameElement) console.error("eventName is null");
-        if (!eventDescriptionElement) console.error("eventDescription is null");
-        if (!startDateElement) console.error("startDate is null");
-        if (!addressElement){
+        // Set radio buttons for event type (Category)
+        const eventTypeRadios = document.getElementsByName('editEventType');
+        eventTypeRadios.forEach((radio) => {
+            if (radio.value === eventData.Category) {
+                radio.checked = true;
+            }
+        });
 
-            console.error("address not defined");
+        // Populate the venue fields
+        document.getElementById('editVenue').value = eventData.Venue || '';
+        document.getElementById('editAddress').value = eventData.Address || '';
+        document.getElementById('editVenueMapLink').value = eventData.Venue_Map_Link || '';
+        document.getElementById('editStartDate').value = eventData.Start_Date || '';
+        document.getElementById('editEndDate').value = eventData.End_Date || '';
+        
+        // Organizer details
+        document.getElementById('editOrganizerName').value = eventData.Organizer_Name || '';
+        
+        
+
+        // Check and populate the venue facilities if they exist:
+        const venueFacilities = eventData.Venue_Facilities ? eventData.Venue_Facilities.split(', ') : [];
+        const facilityCheckboxes = document.getElementsByName('editVenueFacilities[]');
+        facilityCheckboxes.forEach(function(checkbox) {
+            checkbox.checked = venueFacilities.includes(checkbox.value);
+        });
+
+        // Set the Venue Profile Link (if available)
+        document.getElementById('editVenueProfileLink').value = eventData.Venue_Profile_Link || '';
+
+        // If there's an image, set the image preview or leave it blank
+        document.getElementById('editEventImage').value = eventData.Image || '';
+        if (eventData.Venue_Image) {
+            // Set venue image preview logic (if needed)
+            console.log("Venue Image Available:", eventData.Venue_Image);
         }
-        if (!venueElement) console.error("venue is null");
-        if (!organizerNameElement) console.error("organizerName is null");
-        if (!eventImageElement) console.error("eventImage is null");
-        if (!organizerLogoElement) console.error("organizerLogo is null");
-        if (!venueImageElement) console.error("venueImage is null");
-        if (!eventStatusElement) console.error("eventStatus is null");
 
-        return;
+        // Show the modal if needed
+        document.getElementById('editEventModal').style.display = 'block';
+    } catch (error) {
+        console.error("Error parsing event data:", error);
     }
-
-     // Create the new event object
-     const newEvent = {
-        id: events.length + 1,
-        eventName: eventNameElement.value,
-        eventDescription: eventDescriptionElement.value,
-        startDate: startDateElement.value,
-        eventType: document.querySelector('input[name="eventType"]:checked').value,
-        address: addressElement.value,
-        venue: venueElement.value,
-        eventImage: eventImageElement.files[0] ? URL.createObjectURL(eventImageElement.files[0]) : "", // Convert file to URL
-        organizer: {
-            name: organizerNameElement.value,
-            logo: organizerLogoElement.files[0] ? URL.createObjectURL(organizerLogoElement.files[0]) : "", // Convert file to URL
-        },
-        ticketPrice: gatherTicketPrices(),
-        eventStatus: eventStatusElement.value,
-        attendees: [],
-        venueDetails: {
-            facilities: Array.from(document.querySelectorAll('input[name="venueFacilities"]:checked')).map(cb => cb.value),
-            links: {
-                venueProfile: document.getElementById('venueProfileLink').value,
-                maps: document.getElementById('venueMapLink').value
-            },
-            venueImage: venueImageElement.files[0] ? URL.createObjectURL(venueImageElement.files[0]) : "" // Convert file to URL
-        }
-    };
-
-    events.push(newEvent);
-    renderEvents();
-    closeModals('addEventModal');
-    document.getElementById('eventForm').reset();
+    openModal('editEventModal');
 }
 
-function handleEditEvent(event) {
-    event.preventDefault();
-    console.log("Editing event");
-// Validate the form inputs
-if (!validateEditEventForm()) {
-        console.error("Validation failed.");
-        return; // Stop execution if validation fails
-    }
-
-    // Get the event ID from the hidden input
-    const eventId = parseInt(document.getElementById('editEventId').value, 10);
-    console.log("Event ID to edit:", eventId);
-
-    // Find the event to edit
-    const existingEventIndex = events.findIndex(e => e.id === eventId);
-    if (existingEventIndex === -1) {
-        console.error("Event not found!");
-        return;
-    }
-
-    const existingEvent = events[existingEventIndex];
-
-    // Check if the existing event and its organizer are defined
-    if (!existingEvent || !existingEvent.organizer) {
-        console.error("Event or Organizer is not defined!");
-        return;
-    }
-
-    // Proceed with editing...
-    console.log("Editing event:", existingEvent);
-
-    // Access the organizer logo element
-    const editOrganizerLogoElement = document.getElementById('editOrganizerLogo');
-    const updatedOrganizerLogo = editOrganizerLogoElement.files[0]
-        ? URL.createObjectURL(editOrganizerLogoElement.files[0]) // New image selected
-        : existingEvent.organizer.logo; // Use existingEvent instead of event
-
-    // Similarly handle the event image
-    const editEventImageElement = document.getElementById('editEventImage');
-    const updatedEventImage = editEventImageElement.files[0]
-        ? URL.createObjectURL(editEventImageElement.files[0]) // New image selected
-        : existingEvent.eventImage; // Use existingEvent instead of event
 
 
-
-        // Access the venue image element
-        const editVenueImageElement = document.getElementById('editVenueImage'); // Use 'editVenueImage' instead of 'venueImage'
-        const updatedVenueImage = editVenueImageElement.files[0]
-        ? URL.createObjectURL(editVenueImageElement.files[0]) // New image selected
-        : existingEvent.venueDetails.venueImage;
-
-    // Check for null elements and log errors
-    const editEventNameElement = document.getElementById('editEventName');
-    const editEventDescriptionElement = document.getElementById('editEventDescription');
-    const editStartDateElement = document.getElementById('editStartDate');
-    const editVenueElement = document.getElementById('editVenue');
-    const editAddressElement = document.getElementById('editAddress');
-    const editOrganizerNameElement = document.getElementById('editOrganizerName');
-    const editEventStatusElement = document.getElementById('editEventStatus');
-
-    // Check for null elements and log errors
-    if (!editEventNameElement || !editEventDescriptionElement || 
-        !editStartDateElement || !editVenueElement || 
-        !editOrganizerNameElement || !editAddressElement || 
-        !editEventStatusElement || !updatedEventImage || !updatedOrganizerLogo) {
-        
-        console.error("One or more elements are null, please check your IDs");
-        return;
-    }
-
-    // Gather updated event details
-    const updatedEvent = {
-        id: eventId, // Keep the same ID
-        eventName: editEventNameElement.value,
-        eventDescription: editEventDescriptionElement.value,
-        startDate: editStartDateElement.value,
-        eventType: document.querySelector('input[name="editEventType"]:checked').value,
-        address: editAddressElement.value,
-        venue: editVenueElement.value,
-        eventImage: updatedEventImage,
-        organizer: {
-            name: editOrganizerNameElement.value,
-            logo: updatedOrganizerLogo // Use updatedOrganizerLogo
-        },
-        ticketPrice: editgatherTicketPrices(), // Pass the ID of the ticket rows container
-        eventStatus: editEventStatusElement.value,
-        attendees: [], // Keep the attendees as-is or adjust as necessary
-        venueDetails: {
-            facilities: Array.from(document.querySelectorAll('input[name="editVenueFacilities"]:checked')).map(cb => cb.value),
-            links: {
-                venueProfile: document.getElementById('editVenueProfileLink').value,
-                maps: document.getElementById('editVenueMapLink').value
-            },
-            venueImage: updatedVenueImage , // Convert file to URL
-        }
-    };
-
-    // Update the event in the array
-    events[existingEventIndex] = updatedEvent;
-    console.log("Updated Event:", updatedEvent);
-
-    // Refresh the event list and close modal
-    renderEvents();
-    closeModals('editEventModal');
-    document.getElementById('editEventForm').reset();
-}
-
-// Adds a row by making an inactive row active and fills it
 function addTicketRow() {
     const ticketRows = document.getElementById("ticketRows");
     const row = document.createElement("div");
@@ -820,12 +727,7 @@ function editgatherTicketPrices() {
     return tickets;
 }
 
-// Modal management for adding and editing events
-document.getElementById('addEventBtn').addEventListener('click', () => {
-    document.getElementById('eventForm').reset();
-    resetInputStylesEvent()
-    openModal('addEventModal');
-});
+
 
 
 
@@ -1056,74 +958,7 @@ function validateEditEventForm() {
 }
 
 
-function openEditEventModal(id) {
-    const event = events.find(event => event.id === id);
-    if (event) {
-        // Populate basic event details
-        resetEditInputStyles();
-        document.getElementById('editEventId').value = event.id;
-        
-        document.getElementById('editEventName').value = event.eventName;
-        document.getElementById('editEventDescription').value = event.eventDescription;
 
-      // Set the radio button for event type
-    const eventTypeRadios = document.getElementsByName('editEventType');
-    eventTypeRadios.forEach(radio => {
-        console.log(radio.value, event.eventType);
-        if (radio.value === event.eventType) {
-           
-            radio.checked = true;
-        }
-    });
-
-        // Set event date and time
- // Set the start date and convert to local time
-    const startDateUTC = new Date(event.startDate); // Parse the UTC date
-    const localStartDate = startDateUTC.toISOString().slice(0, 16); // Convert to local format
-    document.getElementById('editStartDate').value = localStartDate;
-
-        // Location details
-        document.getElementById('editVenue').value = event.venue;
-        document.getElementById('editAddress').value = event.address;
-        document.getElementById('editVenueMapLink').value = event.venueDetails.links.maps || '';
-
-        // Organizer details
-        document.getElementById('editOrganizerName').value = event.organizer.name || '';
-
-        // Clear and populate ticket prices
-        const ticketContainer = document.getElementById('editTicketRows');
-        ticketContainer.innerHTML = ''; // Clear previous entriesfdsggfdsfgd
-        console.log(event.ticketPrice);
-        // Check if ticketPrice is an array; if not, initialize it
-      const ticketPrices = event.ticketPrice ?? [];
-        console.log("ticketPrices : ",ticketPrices);
-        ticketPrices.forEach(ticket => {
-            console.log("hello");
-            const row = document.createElement('div');
-            row.className = 'ticket-row'; // Ensure we have a class for styles
-            row.innerHTML = `
-                <input type="text" value="${ticket.type}" placeholder="Ticket Type (e.g., VIP)" class="ticket-type" required />
-                <input type="number" value="${ticket.price}" placeholder="Ticket Price" min="0" class="ticket-price" required />
-                <button type="button" class="remove-ticket" onclick="removeTicketRow(this)">Remove</button>
-            `;
-            ticketContainer.appendChild(row);
-        });
-
-        // Set event status
-        document.getElementById('editEventStatus').value = event.eventStatus;
-        document.getElementById('editVenueProfileLink').value = event.venueDetails.links.venueProfile;
-        // Set venue facilities checkboxes
-        document.querySelectorAll("input[name='editVenueFacilities']").forEach(checkbox => {
-            checkbox.checked = event.venueDetails.facilities.includes(checkbox.value);
-        });
-
-    // Store existing images for future reference
- /*        currentOrganizerLogo = event.organizer.logo || '';
-        currentEventImage = event.eventImage || ''; */
-
-        openModal('editEventModal');
-    }
-}
 
 
 function deleteEvent(eventId) {
@@ -1156,85 +991,16 @@ function resetInputStylesEvent() {
         msg.style.display = 'none'; // Hide error messages
     });
 }
-function resetEditInputStyles() {
-    // Select all input elements within the edit event modal
-    const inputs = document.querySelectorAll('#editEventForm input , #editEventDescription');
-    const errorMessages = document.querySelectorAll('.error-message'); // Change class name if necessary
-
-    // Remove error styles from inputs
-    inputs.forEach(input => {
-        input.classList.remove('input-error'); // Remove error class
-    });
-
-    // Hide all error messages
-    errorMessages.forEach(msg => {
-        msg.style.display = 'none'; // Hide error messages
-    });
-}
 
 
-  // Initialize users array with some sample data
-  let users = [
-            { id: 1, username: 'john_doe', email: 'john@example.com', password: 'password123' },
-            { id: 2, username: 'jane_doe', email: 'jane@example.com', password: 'password456' }
-        ];
 
-        // Function to render users table
-        function renderUsers() {
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-            
-            users.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${user.id}</td>
-                    <td>${user.username}</td>
-                    <td>${user.email}</td>
-                    <td class="action-icons">
-                        <button class="edit-btn" onclick="openEditModal(${user.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete-icon" onclick="deleteUser(${user.id})">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-
-        
-        // Function to handle adding new user
-        function handleAddUser(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            if (validateUserForm()) {
-                const newUser = {
-                    id: users.length + 1,
-                    username,
-                    email,
-                    password
-                };
-
-                users.push(newUser);
-                renderUsers();
-                closeModals('adduserModal');
-                document.getElementById('userForm').reset();
-            }
-            return false;
-        }
 
 
 
 
         // Setup modal events
         function setupModals() {
-            const modals = ['adduserModal', 'editUserModal','addEventModal','editEventModal'];
+            const modals = ['adduserModal', 'editUserModal','changeEventStatusModal','viewEventModal'];
             
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
@@ -1258,99 +1024,34 @@ function resetEditInputStyles() {
         }
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
-            renderUsers();
-            renderEvents();
+            
             setupModals();
         });
 
     // Function to open edit modal
-    function openEditModal(id) {
-            const user = users.find(user => user.id === id);
-            if (user) {
-                document.getElementById('editUserId').value = user.id;
-                document.getElementById('editUsername').value = user.username;
-                document.getElementById('editEmail').value = user.email;
-                document.getElementById('editPassword').value = user.password;
-                openModal('editUserModal');
-            }
-        }
+    
 
 
-   // Modal management functions
-function openModal(modalId) {
-    document.getElementById(modalId).classList.add('active');
+        function openModal(modalId) {
+    
+    const modal = document.getElementById(modalId);
+    modal.classList.add('active');
+    modal.style.display = 'flex'; // Ensure the modal is displayed as flex for centering
     document.body.classList.add('no-scroll'); // Disable background scrolling
 }
 
 function closeModals(modalId) {
-    document.getElementById(modalId).classList.remove('active');
+ 
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('active');
+    modal.style.display = 'none'; // Hide the modal
     document.body.classList.remove('no-scroll'); // Enable background scrolling
 }
 
-
- // Function to handle editing user
-        function handleEditUser(event) {
-            event.preventDefault();
-            
-            const userId = parseInt(document.getElementById('editUserId').value);
-            const username = document.getElementById('editUsername').value;
-            const email = document.getElementById('editEmail').value;
-            const password = document.getElementById('editPassword').value;
-
-            if (validateEditUserForm()) {
-                const userIndex = users.findIndex(user => user.id === userId);
-                if (userIndex !== -1) {
-                    users[userIndex] = { ...users[userIndex], username, email, password };
-                    renderUsers();
-                    closeModal('editUserModal');
-                }
-            }
-            return false;
-        }
-
-        // Function to delete user
-        function deleteUser(id) {
-            if (confirm('Are you sure you want to delete this user?')) {
-                users = users.filter(user => user.id !== id);
-                renderUsers();
-            }
-        }
+ 
 
 
-// Function to validate user form inputs
-  function validateUserForm() {
-    const username = document.getElementById('username');
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const usernameError = document.getElementById('usernameError');
-    const emailError = document.getElementById('emailError');
-    const passwordError = document.getElementById('passwordError');
 
-    // Clear previous error messages and icons
-    resetInputStylesuser();
-
-    let isValid = true; // Flag to track overall form validity
-
-    // Basic validation checks
-    if (username.value.length < 3) {
-        setError(username, usernameError, 'Username must be at least 3 characters long.');
-        isValid = false;
-    }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[a-z]{2,3}$/i; // Case insensitive check
-    if (!email.value.match(emailPattern)) {
-        setError(email, emailError, 'Please enter a valid email address.');
-        isValid = false;
-    }
-
-    if (password.value.length < 6) {
-        setError(password, passwordError, 'Password must be at least 6 characters long.');
-        isValid = false;
-    }
-
-    // If all checks pass, return true to allow form submission
-    return isValid;
-}
 
 // Function to display error message and style the input
 function setError(input, errorElement, message) {
@@ -1359,80 +1060,11 @@ function setError(input, errorElement, message) {
     input.classList.add('input-error'); // Add error class for styling
 }
 
-// Function to reset input styles
-function resetInputStylesuser() {
-    const inputs = document.querySelectorAll('#userForm input');
-    const errorMessages = document.querySelectorAll('.error-message');
-
-    inputs.forEach(input => {
-        input.classList.remove('input-error'); // Remove error class
-    });
-
-    errorMessages.forEach(msg => {
-        msg.style.display = 'none'; // Hide error messages
-    });
-
-    
-}
 
 
 
-function validateEditUserForm() {
-        const editUsername = document.getElementById('editUsername');
-        const editEmail = document.getElementById('editEmail');
-        const editPassword = document.getElementById('editPassword');
-        const editUsernameError = document.getElementById('editUsernameError');
-        const editEmailError = document.getElementById('editEmailError');
-        const editPasswordError = document.getElementById('editPasswordError');
 
-        // Clear previous error messages and icons
-        resetEditFormInputStyles();
 
-        let isValid = true; // Flag to track overall form validity
-
-        // Validation for username
-        if (editUsername.value.length < 3) {
-            setEditFormError(editUsername, editUsernameError, 'Username must be at least 3 characters long.');
-            isValid = false;
-        }
-
-        // Validation for email
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[a-z]{2,3}$/i; // Basic email regex
-        if (!editEmail.value.match(emailPattern)) {
-            setEditFormError(editEmail, editEmailError, 'Please enter a valid email address.');
-            isValid = false;
-        }
-
-        // Validation for password
-        if (editPassword.value.length < 6) {
-            setEditFormError(editPassword, editPasswordError, 'Password must be at least 6 characters long.');
-            isValid = false;
-        }
-
-        // If all checks pass, return true to allow form submission
-        return isValid;
-    }
-
-    // Function to display error message and style the input in the edit form
-    function setEditFormError(input, errorElement, message) {
-        errorElement.textContent = message; // Set error message
-        errorElement.style.display = 'block'; // Show error message
-        input.classList.add('input-error'); // Add error class for styling
-    }
-
-    // Function to reset input styles in the edit form
-    function resetEditFormInputStyles() {
-        const inputs = document.querySelectorAll('#editUserForm input');
-        const errorMessages = document.querySelectorAll('#editUserForm .error-message');
-
-        inputs.forEach(input => {
-            input.classList.remove('input-error'); // Remove error class
-        });
-
-        errorMessages.forEach(msg => {
-            msg.style.display = 'none'; // Hide error messages
-        });
-    }
 
 
             // Sidebar navigation
