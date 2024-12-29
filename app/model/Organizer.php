@@ -57,6 +57,35 @@ class Organizer
         ]);
     }
     
+    public function getAllEventsByOrganizerId($organizerId)
+    {
+        $sql = "SELECT * FROM Events WHERE created_by = ? ORDER BY created_at DESC";
+        $stmt = $this->conn->prepare($sql);
+
+        if (!$stmt) {
+            error_log("Prepare failed: " . $this->conn->error);
+            return [];
+        }
+
+        $stmt->bind_param("i", $organizerId);
+        if (!$stmt->execute()) {
+            error_log("Execute failed: " . $stmt->error);
+            return [];
+        }
+
+        $result = $stmt->get_result();
+        $events = [];
+        while ($row = $result->fetch_assoc()) {
+            $events[] = $row;
+        }
+        $stmt->close();
+
+        return $events;
+    }
+
+
+
+
     public function getEventById($eventId) {
         $sql = "SELECT * FROM Events WHERE Event_ID = ?";
         $stmt = $this->conn->prepare($sql);

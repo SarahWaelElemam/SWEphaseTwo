@@ -25,12 +25,14 @@
       $dbh = new Dbh();
       $conn = $dbh->getConn();
 
-      $eventsDb = new Eventsdb($conn);
+      //$eventsDb = new Eventsdb($conn);
 
       
 
 $organizer = new Organizer($conn);
-
+$events = $organizer->getAllEventsByOrganizerId(
+    2 // Example organizer ID
+);
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventName'])) {
     $name = $_POST['eventName'];
     $description = $_POST['eventDescription'];
@@ -169,20 +171,20 @@ if (isset($_GET['delete_event_id'])) {
 }
 
 
-if (isset($_GET['eventId']) && is_numeric($_GET['eventId'])) {
-    $eventId = (int)$_GET['eventId'];
-    $eventToEdit = $eventsDb->getEventById($eventId);
+// if (isset($_GET['eventId']) && is_numeric($_GET['eventId'])) {
+//     $eventId = (int)$_GET['eventId'];
+//     $eventToEdit = $eventsDb->getEventById($eventId);
 
-    if (!$eventToEdit) {
-        echo "Event not found.";
-        exit;
-    }
-}
+//     if (!$eventToEdit) {
+//         echo "Event not found.";
+//         exit;
+//     }
+// }
 
 
 
       // Fetch all events to display
-$events = $eventsDb->getAllEvents();
+//$events = $eventsDb->getAllEvents();
 
 
     ?>
@@ -471,7 +473,7 @@ $events = $eventsDb->getAllEvents();
     <table class="common-table-style events-table">
     <thead>
         <tr>
-            <th>Event ID</th>
+        <th>Event ID</th>
             <th>Name</th>
             <th>Description</th>
             <th>Category</th>
@@ -479,7 +481,10 @@ $events = $eventsDb->getAllEvents();
             <th>Dates</th>
             <th>Venue</th>
             <th>Created</th>
-            <th>Actions</th>
+            <th>Links</th> <!-- New Status Column -->
+
+            <th>Status</th> <!-- New Status Column -->
+
             <th>
                 <button class="buttonadd" id="addEventBtn">Add Event</button>
             </th>
@@ -487,7 +492,24 @@ $events = $eventsDb->getAllEvents();
     </thead>
     <tbody id="eventsTableBody">
         <?php foreach ($events as $event): ?>
+            <?php
+                // Determine the class based on the event's status
+                $statusClass = '';
+                $statusText = '';
+                if ($event['status'] == 'Pending') {
+                    $statusClass = 'pending-status';  // Yellow
+                    $statusText = 'Pending';
+                } elseif ($event['status'] == 'Rejected') {
+                    $statusClass = 'rejected-status';  // Red
+                    $statusText = 'Rejectedss';
+                } elseif ($event['status'] == 'Accepted') {
+                    $statusClass = 'accepted-status';  // Green
+                    $statusText = 'Accepted';
+                }
+            ?>
+            
             <tr class="event-row">
+            
                 <td><?php echo htmlspecialchars($event['Event_ID']); ?></td>
                 <td><?php echo htmlspecialchars($event['Name']); ?></td>
                 <td><?php echo htmlspecialchars($event['Description']); ?></td>
@@ -527,6 +549,27 @@ $events = $eventsDb->getAllEvents();
                     <?php if (!empty($event['Venue_Profile_Link'])): ?>
                         <a href="<?php echo htmlspecialchars($event['Venue_Profile_Link']); ?>" target="_blank" class="link-button">Venue Profile</a>
                     <?php endif; ?>
+                </td>
+                <td class="status-column">
+                    <?php 
+                        // Define inline styles for the status badge
+                        $statusStyle = '';
+                        $statusText = '';
+                        if ($event['status'] == 'Pending') {
+                            $statusStyle = 'background-color: #ffeb3b; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Pending';
+                        } elseif ($event['status'] == 'Rejected') {
+                            $statusStyle = 'background-color: #f44336; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Rejected';
+                        } elseif ($event['status'] == 'Accepted') {
+                            $statusStyle = 'background-color: #4caf50; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Accepted';
+                        } else {
+                            $statusStyle = 'background-color: #9e9e9e; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusText = 'Unknown';
+                        }
+                    ?>
+                    <span style="<?php echo $statusStyle; ?>"><?php echo $statusText; ?></span>
                 </td>
                 <td class="action-icons">
                     <?php

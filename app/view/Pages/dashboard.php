@@ -184,7 +184,12 @@ $events = $eventsDb->getAllEvents();
     <form id="viewEventForm" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" enctype="multipart/form-data">
     <!-- Hidden field for event ID -->
       <input type="hidden" name="eventId" id="viewEventId">
-      
+      <!-- Event Image -->
+
+
+
+<!-- Venue Image -->
+
       <!-- Event Details Section -->
       <h3>Event Details</h3>
       <div class="input-group">
@@ -195,6 +200,9 @@ $events = $eventsDb->getAllEvents();
         <label for="viewEventDescription">Description:</label>
         <textarea id="viewEventDescription" name="viewEventDescription" readonly></textarea>
       </div>
+      <!-- Event Image -->
+<img id="viewEventImage" alt="Event Image" 
+    style="width: 100%; max-width: 200px; height: 250px; border-radius: 8px; object-fit: cover; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <div class="input-group">
         <label>Type of Event:</label>
         <label><input type="radio" name="viewEventType" value="Theatre" disabled> Theatre</label>
@@ -228,7 +236,9 @@ $events = $eventsDb->getAllEvents();
         <label for="viewVenueMapLink">Google Maps Link:</label>
         <input type="text" id="viewVenueMapLink" name="viewVenueMapLink" readonly>
       </div>
-
+<!-- Venue Image -->
+<img id="viewVenueImage" alt="Venue Image" 
+    style="width: 100%; max-width: 200px; height: 250px; border-radius: 8px; object-fit: cover; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <!-- Date and Time Section -->
       <h3>Date and Time</h3>
       <div class="input-group">
@@ -377,6 +387,8 @@ $events = $eventsDb->getAllEvents();
                         unset($eventData['Image']);
                         unset($eventData['Venue_Image']);
                         unset($eventData['Organizer_Logo']);
+                        $eventData['Image'] = base64_encode($event['Image']);
+       $eventData['Venue_Image'] = base64_encode($event['Venue_Image']);
                     ?>
                     <button class="edit-btn" onclick='openViewEventModal(<?php echo json_encode($eventData); ?>)'>
                         <i class="fas fa-edit"></i>
@@ -573,23 +585,24 @@ function openViewEventModal(eventData) {
             statusDropdown.value = eventData.status || 'Pending'; // Default to 'Pending' if no status is found
         }
         // Display event image from blob
-        const eventImageBlob = eventData.Image; // Assuming eventData.ImageBlob is the blob
-        const eventImage = document.getElementById('viewEventImage');
-        if (eventImageBlob) {
-            eventImage.src = URL.createObjectURL(eventImageBlob);
-        } else {
-            eventImage.src = ''; // Use a placeholder if no blob is provided
-        }
+        
+            const eventImageBase64 = eventData.Image;  // Base64-encoded image
+            const venueImageBase64 = eventData.Venue_Image;  // Base64-encoded image
 
-        // Display venue image from blob
-        const venueImageBlob = eventData.VenueImageBlob; // Assuming eventData.VenueImageBlob is the blob
-        const venueImage = document.getElementById('viewVenueImage');
-        if (venueImageBlob) {
-            venueImage.src = URL.createObjectURL(venueImageBlob);
-        } else {
-            venueImage.src = ''; // Use a placeholder if no blob is provided
-        }
-   // Directly set the status dropdown value
+            const eventImage = document.getElementById('viewEventImage');
+            if (eventImageBase64) {
+            eventImage.src = `data:image/jpeg;base64,${eventImageBase64}`;
+            } else {
+            eventImage.src = 'placeholder.jpg';  // Fallback to a placeholder
+            }
+
+            const venueImage = document.getElementById('viewVenueImage');
+            if (venueImageBase64) {
+            venueImage.src = `data:image/jpeg;base64,${venueImageBase64}`;
+            } else {
+            venueImage.src = 'placeholder.jpg';  // Fallback to a placeholder
+            }
+   
    
 
         console.log(statusDropdown);

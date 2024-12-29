@@ -14,20 +14,7 @@ class Admin
     /**
      * Authenticate admin login
      */
-   /*  public function login($username, $password)
-    {
-        $sql = "SELECT * FROM admins WHERE username = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$username]);
-
-        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            if (password_verify($password, $row['password'])) {
-                return $row; // Return admin details if login is successful
-            }
-        }
-        return false; // Return false for invalid login
-    }
- */
+   
     /**
      * Update the status of an event
      */
