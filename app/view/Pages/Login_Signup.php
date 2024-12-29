@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '../../../Controller/SessionManager.php';
 require_once("../../model/LoginSignupModel.php");
+include 'forget_password.php';
+
 use App\Controller\SessionManager;
 
 // Redirect if already logged in
@@ -51,12 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="input-block">
                             <label for="login-password">Password</label>
                             <input id="login-password" type="password" name="Password" required>
-                       <!-- Add the Forgot Password link here -->
-<div class="forgot-password" style="margin-top: 15px; text-align: right;">
-    <a href="#" id="forgot-password-link">Forgot Password?</a>
-</div>
-                        </div>
+                            <a href="#" id="forgot-password">Forget Your Password?</a>
                     </fieldset>
+                    
                     <input type="hidden" name="formType" value="login">
                     <button type="submit" class="btn-login">Login</button>
                
@@ -124,6 +123,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
         </div>
+        <div id="forgot-password-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <form id="forgot-password-form">
+            <div id="email-step">
+                <p>Enter your email, and we'll send you a 4-digit code:</p>
+                <div>
+                    <label for="forgot-email">Email:</label>
+                    <input type="email" id="forgot-email" name="email" required>
+                </div>
+                <button type="button" id="send-code">Send Code</button>
+            </div>
+
+            <div id="code-step" style="display: none;">
+                <p>Enter the 4-digit code sent to your email:</p>
+                <input type="text" id="verification-code" name="code" maxlength="4" required>
+                <button type="button" id="verify-code">Verify Code</button>
+            </div>
+
+            <div id="password-step" style="display: none;">
+                <p>Enter your new password:</p>
+                <div>
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="new-password" name="password" required>
+                </div>
+                <button type="button" id="reset-password">Confirm</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
     </section>
     <?php include "../Components/Footer.php"?>
     <script src="../../../public/js/Login_Signup.js"></script>
