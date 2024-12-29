@@ -1,6 +1,73 @@
-<?php include "../Components/NavBar.php";
+<?php 
+include "../Components/NavBar.php";
 $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']));
+
+// Include the database connection and Tickets class
+require_once("../../../app/db/Dbh.php");
+require_once("../../../app/model/Tickets.php");
+
+// Create an instance of the DBh class and establish the database connection
+$dbh = new Dbh();
+$conn = $dbh->getConn();
+
+// Initialize the Tickets class with the database connection
+$tickets = new Tickets($conn);
+
+// Handle POST request for ticket purchase
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate required POST fields
+    if (!isset($_POST['ticket_ids']) || empty($_POST['ticket_ids'])) {
+        echo "Error: Ticket IDs are required.";
+        exit;
+    }
+
+    // Decode the ticket IDs from the POST request (assume it's a comma-separated string)
+    $ticketIds = explode(',', $_POST['ticket_ids']);
+
+    // Simulate payment validation (replace with actual payment logic)
+    $paymentSuccessful = true; // This should be set based on your payment gateway response
+
+    if ($paymentSuccessful) {
+        $newStatus = "Sold";
+        $successCount = 0;
+        $totalTickets = count($ticketIds);
+
+        // Begin transaction
+        $conn->begin_transaction();
+
+        try {
+            // Update ticket status for each ticket ID
+            foreach ($ticketIds as $ticketId) {
+                $ticketId = trim($ticketId);
+                if ($tickets->updateTicketStatus($ticketId, $newStatus)) {
+                    $successCount++;
+                }
+            }
+
+            // If all tickets were updated successfully, commit the transaction
+            if ($successCount === $totalTickets) {
+                $conn->commit();
+                // You might want to store this in a session variable to show success message
+                $_SESSION['purchase_success'] = true;
+            } else {
+                // If any update failed, rollback all changes
+                $conn->rollback();
+                throw new Exception("Failed to update all ticket statuses");
+            }
+        } catch (Exception $e) {
+            // Rollback the transaction on any error
+            $conn->rollback();
+            echo "<p>Error: " . $e->getMessage() . ". Please contact support.</p>";
+            exit;
+        }
+    } else {
+        echo "<p>Payment failed. Please try again.</p>";
+        exit;
+    }
+}
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,6 +147,7 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
     <div class="payment-buttons">
             <button type="button" class="btn-cancel" id="cancelPayment">Cancel</button>
             <button type="submit" class="btn-pay" onclick="validateCardNumber(event)">Pay Now</button>
+
         </div>
     </div>
 
@@ -164,6 +232,7 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
     <div id="totalCostDisplay" class="total-cost-display">
     Total <?php echo htmlspecialchars($_POST["ticket_count"])*($_POST['ticket_price']); ?> EGP
     </div>
+    
 </div>
 </div>
 </div>

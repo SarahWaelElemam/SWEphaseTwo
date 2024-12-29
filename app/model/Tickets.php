@@ -47,5 +47,23 @@ class Tickets extends Model {
 
         return $tickets;
     }
+    public function getAvailableTicketCount($eventId, $ticketType) {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as available_count FROM tickets WHERE event_id = ? AND type = ? AND status = 'Available'");
+        $stmt->bind_param("is", $eventId, $ticketType);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result['available_count'] ?? 0;
+    }
+    
+    
+    public function updateTicketStatus($ticketId, $newStatus) {
+        $sql = "UPDATE tickets SET Status = ? WHERE Ticket_ID = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("si", $newStatus, $ticketId);
+        return $stmt->execute();
+    }
+    
+    
 }
+
 ?>

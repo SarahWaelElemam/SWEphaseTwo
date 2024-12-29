@@ -65,14 +65,10 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
 
     foreach ($tickets as $ticket) {
         if ($ticket['Status'] == 'Available' && !in_array($ticket['type'], $displayedTypes)) {
-            // Add the ticket type to the array
             $displayedTypes[] = $ticket['type'];
-
-            // Create button onclick based on category
-            $buttonOnClick = $_POST['Category'] === 'Concert' 
-            ? "openModal('" . htmlspecialchars($ticket['type']) . "', '" . htmlspecialchars($ticket['Price']) . "', '" . htmlspecialchars($ticket['Ticket_ID']) . "')"
-            : "confirmPurchase('" . htmlspecialchars($ticket['type']) . "', '" . htmlspecialchars($ticket['Price']) . "', '" . htmlspecialchars($ticket['Ticket_ID']) . "')";
-
+            $availableCount = $ticketsModel->getAvailableTicketCount($eventId, $ticket['type']);
+            $buttonOnClick = "openModal('" . htmlspecialchars($ticket['type']) . "', '" . htmlspecialchars($ticket['Price']) . "', '" . htmlspecialchars($ticket['Ticket_ID']) . "', $availableCount)";
+    
             // Render the ticket
             echo "<div class='ticket' style='border:none; background-color:transparent; box-shadow:none; '>
                     <h2 style='background-color:orange; color:white; margin-bottom:0rem; padding:1rem; border-radius:2rem;'> {$ticket['type']}</h2>
@@ -107,7 +103,7 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
                 <button type="button" id="incrementBtn" class="counter-btn" onclick="updateTicketCount(1)">+</button>
             </div>
         </div>
-
+        <input type="hidden" name="ticket_ids" value="1,2,3">
         <button class="confirm-btn" onclick="confirmPurchase()">Confirm Purchase</button>
     </div>
 </div>
@@ -135,29 +131,39 @@ $dateTime = date('M d | h:ia', strtotime($_POST['date'] . ' ' . $_POST['time']))
     </div>
 
     <script>
-        function updateTicketCount(change) {
+       function updateTicketCount(change) {
     const ticketCountInput = document.getElementById('ticketCount');
     let currentCount = parseInt(ticketCountInput.value);
 
-    // Update the ticket count, ensuring it stays within the range of 1 to 5
+    // Get the maxCount from the modal's dataset
+    const maxCount = parseInt(document.getElementById('ticketModal').dataset.maxCount);
+
+    // Update the ticket count, ensuring it stays within the range of 1 to maxCount
     currentCount += change;
 
     if (currentCount < 1) {
         currentCount = 1; // Minimum value
-    } else if (currentCount > 5) {
-        currentCount = 5; // Maximum value
+    } else if (currentCount > maxCount) {
+        currentCount = maxCount; // Maximum value from modal
     }
 
     ticketCountInput.value = currentCount;
 }
-function openModal(ticketType, ticketPrice, ticketId) {
-    // Store ticket info in data attributes
+
+function openModal(ticketType, ticketPrice, ticketId, maxCount) {
+    const category = '<?php echo htmlspecialchars($_POST["Category"]); ?>';
+
+    // Check if the category is "concert"
+    if (category !== 'Concert') {
+        confirmPurchase();
+        return; // Exit the function without opening the modal
+    }
     const modal = document.getElementById('ticketModal');
     modal.dataset.ticketType = ticketType;
     modal.dataset.ticketPrice = ticketPrice;
     modal.dataset.ticketId = ticketId;
-    
-    // Show the modal
+    modal.dataset.maxCount = maxCount; // Pass the maximum count dynamically
+
     modal.style.display = 'block';
     document.getElementById('ticketType').textContent = ` ${ticketType}`;
     document.getElementById('ticketType').style.color = 'orange';
@@ -166,112 +172,60 @@ function openModal(ticketType, ticketPrice, ticketId) {
 }
 
 
+
+
     function closeModal() {
         document.getElementById('ticketModal').style.display = 'none';
     }
 
-    function confirmPurchase(directTicketType = null, directTicketPrice = null, directTicketId = null) {
-        let ticketType, ticketPrice, ticketId, ticketCount;
-        
-        const modal = document.getElementById('ticketModal');
-        
-        // Check if we're coming from the modal or direct button click
-        if (directTicketType === null) {
-            // Coming from modal
-            ticketType = modal.dataset.ticketType;
-            ticketPrice = modal.dataset.ticketPrice;
-            ticketId = modal.dataset.ticketId;
-            ticketCount = document.getElementById('ticketCount').value;
-        } else {
-            // Coming from direct button click
-            ticketType = directTicketType;
-            ticketPrice = directTicketPrice;
-            ticketId = directTicketId;
-            ticketCount = "0"; // Default for direct purchase
-        }
-
-        // Determine the action based on the Category
-        const category = '<?php echo htmlspecialchars($_POST["Category"]); ?>';
-
-        if (category === 'Concert') {
-            // Proceed with pay.php
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'concert.php';
-
-            // Add all the event data that was passed from Events.php
-            const eventData = {
-                event_id: '<?php echo htmlspecialchars($_POST["event_id"]); ?>',
-                name: '<?php echo htmlspecialchars(addslashes($_POST["name"])); ?>',
-                location: '<?php echo htmlspecialchars(addslashes($_POST["location"])); ?>',
-                date: '<?php echo htmlspecialchars($_POST["date"]); ?>',
-                time: '<?php echo htmlspecialchars($_POST["time"]); ?>',
-                Category: '<?php echo htmlspecialchars($_POST["Category"]); ?>',
-                organizer_image: '<?php echo htmlspecialchars($_POST["organizer_image"]); ?>',
-                image: '<?php echo htmlspecialchars($_POST["image"]); ?>',
-            };
-
-            // Add event data to form
-            for (const [key, value] of Object.entries(eventData)) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = value;
-                form.appendChild(input);
-            }
-
-            // Add ticket data to form
-            const ticketData = {
-                ticket_id: ticketId,
-                ticket_type: ticketType,
-                ticket_price: ticketPrice,
-                ticket_count: ticketCount
-            };
-
-            for (const [key, value] of Object.entries(ticketData)) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = value;
-                form.appendChild(input);
-            }
-
-            // Submit the form
-            document.body.appendChild(form);
-            form.submit();
-        } else {
-            // Proceed with pay.php
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = 'pay.php';
-
-            // Add all the event data that was passed from Events.php
-            const eventData = {
-                event_id: '<?php echo htmlspecialchars($_POST["event_id"]); ?>',
-                name: '<?php echo htmlspecialchars(addslashes($_POST["name"])); ?>',
-                location: '<?php echo htmlspecialchars(addslashes($_POST["location"])); ?>',
-                date: '<?php echo htmlspecialchars($_POST["date"]); ?>',
-                time: '<?php echo htmlspecialchars($_POST["time"]); ?>',
-                Category: '<?php echo htmlspecialchars($_POST["Category"]); ?>',
-                organizer_image: '<?php echo htmlspecialchars($_POST["organizer_image"]); ?>',
-                image: '<?php echo htmlspecialchars($_POST["image"]); ?>',
-            };
-
-            // Add event data to form
-            for (const [key, value] of Object.entries(eventData)) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = value;
-                form.appendChild(input);
-            }
-
-
-            // Submit the form
-            document.body.appendChild(form);
-            form.submit();
-        }
+    function confirmPurchase() {
+    const modal = document.getElementById('ticketModal');
+    const ticketType = modal.dataset.ticketType;
+    const ticketPrice = modal.dataset.ticketPrice;
+    const baseTicketId = parseInt(modal.dataset.ticketId);
+    const ticketCount = parseInt(document.getElementById('ticketCount').value);
+    
+    // Create an array of sequential ticket IDs based on the base ticket ID
+    const ticketIds = [];
+    for(let i = 0; i < ticketCount; i++) {
+        ticketIds.push(baseTicketId + i);
     }
+    const category = '<?php echo htmlspecialchars($_POST["Category"]); ?>';
+    const actionUrl = category === 'Concert' ? 'concert.php' : 'pay.php';
+    // Create the form
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = actionUrl;
+
+    // Add all the event data
+    const eventData = {
+        event_id: '<?php echo htmlspecialchars($_POST["event_id"]); ?>',
+        name: '<?php echo htmlspecialchars(addslashes($_POST["name"])); ?>',
+        location: '<?php echo htmlspecialchars(addslashes($_POST["location"])); ?>',
+        date: '<?php echo htmlspecialchars($_POST["date"]); ?>',
+        time: '<?php echo htmlspecialchars($_POST["time"]); ?>',
+        Category: '<?php echo htmlspecialchars($_POST["Category"]); ?>',
+        organizer_image: '<?php echo htmlspecialchars($_POST["organizer_image"]); ?>',
+        image: '<?php echo htmlspecialchars($_POST["image"]); ?>',
+        ticket_ids: ticketIds.join(','),
+        ticket_type: ticketType,
+        ticket_price: ticketPrice,
+        ticket_count: ticketCount
+    };
+
+    // Add all form fields
+    for (const [key, value] of Object.entries(eventData)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    }
+
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
+}
     function scrollToTicketSection() {
         const ticketSection = document.getElementById('ticket-section');
         ticketSection.scrollIntoView({

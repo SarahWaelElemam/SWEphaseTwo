@@ -294,3 +294,13 @@ document.getElementById('cancelPayment').addEventListener('click', function() {
 
 // Initialize on page load
 window.addEventListener('load', setInitialPaymentState);
+document.getElementById('paymentForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const selectedTicketIds = [/* array of selected ticket IDs */];
+    const ticketIdsField = document.createElement('input');
+    ticketIdsField.type = 'hidden';
+    ticketIdsField.name = 'ticket_ids';
+    ticketIdsField.value = selectedTicketIds.join(',');
+    this.appendChild(ticketIdsField);
+    this.submit();
+});
