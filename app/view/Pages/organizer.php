@@ -235,9 +235,7 @@ if (isset($_GET['delete_event_id'])) {
         <h2>Oraganizer.</h2>
       </div>
       <ul>
-        <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
-        <li><a href="#" data-page="events">Events</a></li>
-        <li><a href="#" data-page="users">User Management</a></li>
+        <li><a href="#" class="active" data-page="events">Events</a></li>
         <li><a href='#'>Log Out</a><li>
       </ul>
     </div>
@@ -247,7 +245,7 @@ if (isset($_GET['delete_event_id'])) {
       <!-- Dashboard page -->
 
 <!-- Event Management Page -->
-<div id="events-page" class="page hidden">
+<div id="events-page" class="page">
     <header>
         <h1>Event Management</h1>
     </header>

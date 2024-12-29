@@ -89,10 +89,8 @@ $events = $eventsDb->getAllEvents();
     <h2>Admin.</h2>
   </div>
   <ul>
-    <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
     <li><a href="chat.php" id="chat-link" data-page="chat">Chat</a></li>
-    <li><a href="#" data-page="calendar">Calendar</a></li>
-    <li><a href="#" data-page="events">Events</a></li>
+    <li><a href="#" class="active" data-page="events">Events</a></li>
     <li><a href="user-management.php" id="user-management-link">User Management</a></li>
     <li><a href="#">Log Out</a></li>
   </ul>
@@ -105,7 +103,7 @@ $events = $eventsDb->getAllEvents();
         <p><?php echo htmlspecialchars($message); ?></p>
     <?php endif; ?>
 <!-- Event Management Page -->
-<div id="events-page" class="page hidden">
+<div id="events-page" class="page">
     <header>
         <h1>Event Management</h1>
     </header>
