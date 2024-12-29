@@ -1,14 +1,20 @@
 <?php
 require_once __DIR__ . '../../../Controller/SessionManager.php';
 require_once("../../model/LoginSignupModel.php");
-include 'forget_password.php';
+require_once("../../db/Dbh.php");
 
+// include 'forget_password .php';
+session_start();
 use App\Controller\SessionManager;
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require 'phpmailer/src/Exception.php';
+require 'phpmailer/src/PHPMailer.php';
+require 'phpmailer/src/SMTP.php';
 // Redirect if already logged in
-if (SessionManager::isLoggedIn()) {
-    SessionManager::redirect('/SWEphaseTwo/app/view/Pages/Homepage.php');
-}
+// if (SessionManager::isLoggedIn()) {
+//     SessionManager::redirect('/SWEphaseTwo/app/view/Pages/Homepage.php');
+// }
 
 $model = new LoginSignupModel();
 
@@ -20,6 +26,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($formType === 'signup') {
         $model->handleSignup($_POST);
     }
+}
+
+
+if (isset($_POST['forgot_email'])) {
+    $_SESSION['forgot_email']=$_POST['forgot_email'];
+    $mail = new PHPMailer(true);
+$mail->isSMTP();
+$mail->Host = 'smtp.gmail.com';
+$mail->SMTPAuth = true;
+$mail->Username = 'm20930327@gmail.com';
+$mail->Password = 'mylkxlurfdfsbies';
+$mail->SMTPSecure = 'ssl';
+$mail->Port = 465;
+$mail->setFrom('m20930327@gmail.com');
+$mail->addAddress($_POST['forgot_email']); // Use the dynamic email here
+$mail->isHTML(true);
+$mail->Subject = "Forget Password";
+$mail->Body = " <a href='http://localhost:8080/SWEphaseTwo/app/view/Pages/forget.php'>Click here to reset your password </a>";
+$mail->send();
 }
 ?>
 
@@ -126,7 +151,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="forgot-password-modal" class="modal">
     <div class="modal-content">
         <span class="close-button">&times;</span>
-        <form id="forgot-password-form">
+       
+       
+       <form method="post">
+       <div id="email-step">
+                <p>Enter your email, and we'll send you a 4-digit code:</p>
+                <div>
+                    <label for="forgot-email">Email:</label>
+                    <input type="email" id="forgot-email" name="forgot_email" required>
+                </div>
+                <button type="submit" id="send-code">Send Code</button>
+            </div>
+       </form>
+        <!-- <form id="forgot-password-form">
             <div id="email-step">
                 <p>Enter your email, and we'll send you a 4-digit code:</p>
                 <div>
@@ -150,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <button type="button" id="reset-password">Confirm</button>
             </div>
-        </form>
+        </form> -->
     </div>
 </div>
 
