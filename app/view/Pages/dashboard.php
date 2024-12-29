@@ -379,7 +379,7 @@ $events = $eventsDb->getAllEvents();
                         $statusStyle = '';
                         $statusText = '';
                         if ($event['status'] == 'Pending') {
-                            $statusStyle = 'background-color: #ffeb3b; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusStyle = 'background-color:rgb(159, 150, 71); color: white; padding: 5px 10px; border-radius: 5px;';
                             $statusText = 'Pending';
                         } elseif ($event['status'] == 'Rejected') {
                             $statusStyle = 'background-color: #f44336; color: white; padding: 5px 10px; border-radius: 5px;';
@@ -408,9 +408,7 @@ $events = $eventsDb->getAllEvents();
                     <button class="edit-btn" onclick='openViewEventModal(<?php echo json_encode($eventData); ?>)'>
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="delete-icon" onclick="deleteEvent(<?php echo htmlspecialchars($event['Event_ID']); ?>)">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                    
                 </td>
             </tr>
         <?php endforeach; ?>

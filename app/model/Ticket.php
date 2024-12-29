@@ -33,31 +33,32 @@ class Ticket {
         return $count > 0; // Return true if the ticket exists, false otherwise
     }
 
-    public function getTicketsForEvent($eventId)
-    {
-        try {
-            $sql = "SELECT category FROM tickets WHERE event_id = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$eventId]);
+    public function getTicketsForEvent($eventId) {
+        // Prepare the SQL query to retrieve tickets for the given event
+        $sql = "SELECT category, price, quantity FROM tickets WHERE event_id = ?";
+        $stmt = $this->conn->prepare($sql);
     
-            // Fetch all ticket categories
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-            // Check if the result is empty
-            if (!$result) {
-                throw new Exception('No tickets found for this event.');
-            }
-    
-            // Extract ticket categories from the result
-            return array_map(function ($ticket) {
-                return $ticket['category'];
-            }, $result);
-    
-        } catch (Exception $e) {
-            // Handle the exception (log it or display an error message)
-            echo "Error: " . $e->getMessage();
-            return []; // Return an empty array in case of an error
+        if (!$stmt) {
+            throw new Exception("Failed to prepare statement: " . $this->conn->error);
         }
+    
+        // Bind the parameter and execute the query
+        $stmt->bind_param("i", $eventId);
+        $stmt->execute();
+    
+        // Fetch the results
+        $result = $stmt->get_result();
+    
+        // Initialize an array to store tickets
+        $tickets = [];
+        while ($row = $result->fetch_assoc()) {
+            $tickets[] = $row; // Append each ticket as an associative array
+        }
+    
+        // Close the statement
+        $stmt->close();
+    
+        return $tickets; // Return the list of tickets
     }
 
     // Update an existing ticket

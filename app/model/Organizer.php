@@ -216,29 +216,37 @@ class Organizer
 
 
         
-        // Handle ticket updates
-        if (!empty($ticketCategories) && !empty($ticketPrices) && !empty($ticketQuantities)) {
-            $ticketModel = new Ticket($this->conn);  // Create an instance of the Ticket model
-    
-            // Loop through the ticket data and update or insert tickets
-            foreach ($ticketCategories as $index => $ticketCategory) {
-                $ticketPrice = $ticketPrices[$index];
-                $ticketQuantity = $ticketQuantities[$index];
-                $availableTickets = $ticketQuantity; // Initially, all tickets are available
-    
-                // Check if the ticket already exists for this event
-                // Assuming there's a method to check if a ticket exists (you can implement your own logic)
-                if ($ticketModel->ticketExists($eventId, $ticketCategory)) {
-                    // Update existing ticket
-                    $ticketModel->updateTicket($eventId, $ticketCategory, $ticketPrice, $ticketQuantity, $availableTickets);
-                } else {
-                    // Insert new ticket
-                    $ticketModel->insertTicket($eventId, $ticketCategory, $ticketPrice, $ticketQuantity, $availableTickets);
-                }
+       // Handle ticket updates
+       if (!empty($ticketCategories) && !empty($ticketPrices) && !empty($ticketQuantities)) {
+        $ticketModel = new Ticket($this->conn); // Assuming Ticket class handles ticket-related operations
+
+        // Fetch existing tickets for this event
+        $existingTickets = $ticketModel->getTicketsForEvent($eventId);
+        $existingCategories = array_column($existingTickets, 'category'); // Extract existing ticket categories
+
+        // Determine tickets to delete
+        $ticketsToDelete = array_diff($existingCategories, $ticketCategories);
+        foreach ($ticketsToDelete as $categoryToDelete) {
+            $ticketModel->deleteTicket($eventId, $categoryToDelete);
+        }
+
+        // Loop through the ticket data to update or insert tickets
+        foreach ($ticketCategories as $index => $ticketCategory) {
+            $ticketPrice = floatval($ticketPrices[$index]);
+            $ticketQuantity = intval($ticketQuantities[$index]);
+            $availableTickets = $ticketQuantity;
+
+            if (in_array($ticketCategory, $existingCategories)) {
+                // Update existing ticket
+                $ticketModel->updateTicket($eventId, $ticketCategory, $ticketPrice, $ticketQuantity, $availableTickets);
+            } else {
+                // Insert new ticket
+                $ticketModel->insertTicket($eventId, $ticketCategory, $ticketPrice, $ticketQuantity, $availableTickets);
             }
         }
-    
-        return true; // Event and tickets updated successfully
+    }
+
+    return true; //
     }
 
     public function deleteEvent($eventId) {

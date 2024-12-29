@@ -98,6 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventName'])) {
 
     if ($success) {
         echo "Event and tickets have been added successfully!";
+        header("Location: ".$_SERVER['PHP_SELF']); // Reload the page
+        exit;
     } else {
         echo "Failed to add event or tickets.";
     }
@@ -184,6 +186,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventId'])) {
 
     if ($success) {
         echo "Event updated successfully!";
+        header("Location: ".$_SERVER['PHP_SELF']); // Reload the page
+        exit;
     } else {
         echo "Failed to update event.";
     }
@@ -584,7 +588,7 @@ if (isset($_GET['delete_event_id'])) {
                         $statusStyle = '';
                         $statusText = '';
                         if ($event['status'] == 'Pending') {
-                            $statusStyle = 'background-color: #ffeb3b; color: white; padding: 5px 10px; border-radius: 5px;';
+                            $statusStyle = 'background-color:rgb(159, 150, 71); color: white; padding: 5px 10px; border-radius: 5px;';
                             $statusText = 'Pending';
                         } elseif ($event['status'] == 'Rejected') {
                             $statusStyle = 'background-color: #f44336; color: white; padding: 5px 10px; border-radius: 5px;';
