@@ -5,22 +5,23 @@ session_start();
 <?php include "../Components/NavBar.php";
 require_once("../../db/Dbh.php");
 ?>
-<?php 
-
+<?php
+$email= $_GET['email'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db = new Dbh();
-    $password=$_POST['password'];
-    $email=$_SESSION['forgot_email'];
+    $password = $_POST['password'];
+    // $email = $_SESSION['forgot_email'];
     $conn = $db->getConn();
-            $stmt = $conn->prepare("UPDATE user SET Password= ? where Email=?");
-            $stmt->bind_param("ss", $password, $email);
-            $stmt->execute();
-            session_destroy();
-            header("location:Login_Signup.php");
+    $stmt = $conn->prepare("UPDATE user SET Password= ? where Email=?");
+    $stmt->bind_param("ss", $password, $email);
+    $stmt->execute();
+   
+    header("location:Login_Signup.php");
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,12 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../../../public/css/Login_Signup.css">
     <link rel="stylesheet" href="../../../public/css/Footer.css">
 </head>
+
 <body>
     <section class="forms-section">
         <h1 class="section-title">Welcome To TixCarte</h1>
         <div class="forms" style="margin:center;">
             <div class="form-wrapper is-active">
-                <form class="form form-login" method="POST" >
+                <form class="form form-login" method="POST">
                     <fieldset>
                         <legend>Please, enter your password and confirm password to proceed.</legend>
                         <div class="input-block">
@@ -75,4 +77,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     </script>
 </body>
+
 </html>
