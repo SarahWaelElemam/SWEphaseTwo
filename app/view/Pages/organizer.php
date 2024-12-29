@@ -655,7 +655,7 @@ function handleEditEvent(event) {
         console.error("Validation failed.");
         return; // Stop execution if validation fails
     }
-
+    
     closeModals('editEventModal'); 
        document.getElementById('editEventForm').submit();
 
