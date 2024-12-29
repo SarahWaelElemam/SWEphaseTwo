@@ -29,7 +29,6 @@
             <li><a href="file.php">Contact Us</a></li>
             <li><a href="AboutUs.php">Careers</a></li>
             <li><a href="PrivPol.php">Policies</a></li>
-            <li><a href="#">FAQs</a></li>
           </ul>
         </div>
 

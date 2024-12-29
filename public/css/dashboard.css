@@ -1,715 +1,170 @@
-/* General Styles */
+General Styles
 body {
-  font-family: "Roboto", sans-serif;
-  background-color: #ecf0f1;
-  color: #2c3e50;
+  font-family: 'Times New Roman', Times, serif;
+  background-color: #f4f7f6;
   margin: 0;
   padding: 0;
+  color: #2c3e50;
   line-height: 1.6;
-  box-sizing: border-box;
 }
 
-/* Sidebar Styles */
-.sidebar {
-  width: 250px;
-  background-color: #2c3e50;
-  color: #fff;
-  padding: 20px;
-  position: fixed;
-  height: 100%;
-  overflow: auto;
-}
+/* Header Styles */
+h1 {
+  font-family: 'Times New Roman', Times, serif;
 
-.sidebar .logo {
   text-align: center;
-  margin-bottom: 30px;
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #ecf0f1;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-.sidebar ul li {
-  margin: 15px 0;
-}
-
-.sidebar ul li a {
-  color: #ecf0f1;
-  text-decoration: none;
-  padding: 15px;
-  display: block;
-  font-size: 16px;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.sidebar ul li a:hover,
-.sidebar ul li a.active {
-  background-color: #2980b9;
-  transform: scale(1.05);
-}
-
-/* Main Content Styles */
-.main-content {
-  margin-left: 260px;
-  padding: 40px;
-  background-color: #f4f7f6;
-  min-height: 100vh;
-  overflow: auto;
-}
-
-header h1 {
+  margin: 20px 0;
   font-size: 36px;
   color: #34495e;
-  margin-bottom: 40px;
 }
 
-.hidden {
-  display: none;
+h2, h3 {
+  color: #34495e;
+  margin-bottom: 20px;
 }
 
-/* Button Styles */
-.buttonadd {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 10px 16px; /* Adjusted padding for better alignment */
-  font-size: 16px; /* Slightly smaller font for better fit */
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  margin-left: 10px; /* Added margin for spacing */
-  float: right; /* Aligns button to the right */
+/* Admin Actions Form */
+.admin-actions {
+  width: 80%;
+  margin: 0 auto 30px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.buttonadd:hover {
-  background-color: #c0392b;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+.admin-actions form {
   display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Modal Content */
-.modal-content {
-  position: relative;
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
-  width: 90%;
-  max-height: 80vh; /* Set max height to control overflow */
-  overflow-y: auto; /* Enable scrolling within modal */
-}
-
-.modal-content h2 {
-  margin-bottom: 20px;
-  font-size: 28px;
-  color: #2c3e50;
-}
-
-/* Close Button Styles */
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  font-size: 24px;
-  color: #bdc3c7;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.modal-close:hover {
-  color: #e74c3c;
-}
-
-/* Input Styles */
-.modal-content input[type="text"],
-.modal-content input[type="email"],
-.modal-content input[type="password"],
-.modal-content input[type="number"],
-.modal-content input[type="tel"],
-.modal-content textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #bdc3c7;
-  border-radius: 8px;
+.admin-actions input, 
+.admin-actions select, 
+.admin-actions button {
   font-size: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-
-.modal-content input:focus,
-.modal-content textarea:focus {
-  border-color: #3498db;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #bdc3c7;
   outline: none;
+  transition: all 0.3s ease;
 }
 
-/* Button Styles */
-.modal-content button {
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  font-size: 18px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  display: block;
-  width: 100%;
-  margin-top: 10px;
-}
-
-/* Prevent scrolling on the background when modal is open */
-.no-scroll {
-  overflow: hidden;
-}
-
-.modal-content button:hover {
-  background-color: #219150;
-  transform: scale(1.05);
-}
-
-/* Scrollable Container for Long Content */
-.modal-content .scrollable-content {
-  max-height: 60vh;
-  overflow-y: auto;
-  padding-right: 10px;
-  margin-right: -10px; /* Hide scrollbar gap */
-}
-
-/* Ticket Row Styling */
-.ticket-row {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-  justify-content: space-between;
-}
-
-.ticket-type,
-.ticket-price {
-  width: 45%; /* Ensure inputs take appropriate width */
-  padding: 8px;
-  font-size: 14px;
-  margin-right: 10px;
-}
-
-.remove-ticket {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  align-self: flex-end; /* Keep it aligned to the right */
-}
-
-.remove-ticket:hover {
-  background-color: #c0392b;
-}
-
-#ticketPriceContainer button {
-  width: auto; /* Adjust the Add Ticket Type button size */
-  padding: 10px 20px;
-}
-/* Input error styling */
-.input-error {
-  border: 1px solid #e74c3c; /* Red border for error */
-  background-color: #f8d7da; /* Light red background */
-}
-
-/* Focus styling on error */
-.input-error:focus {
-  outline: none; /* Remove default outline */
-  border-color: #c0392b; /* Darker red on focus */
-}
-
-/* Error message styling */
-.error-message {
-  color: #e74c3c; /* Red color for error messages */
-  font-size: 14px;
-  margin-top: 5px; /* Space above the message */
-  display: none; /* Hidden by default */
-}
-
-/* Icon for error indication */
-.error-icon {
-  color: #e74c3c; /* Red icon */
-  margin-left: 5px; /* Space between input and icon */
-  display: none; /* Hidden by default */
-}
-
-/* Table Styles */
-/* Common table styles for all tables */
-.common-table-style {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.common-table-style th,
-.common-table-style td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.common-table-style thead {
-  background-color: #2980b9;
-  color: white;
-  font-size: 18px;
-  text-transform: uppercase;
-}
-
-.common-table-style tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.common-table-style tbody tr:hover {
-  background-color: #ecf0f1;
-  cursor: pointer;
-}
-
-.common-table-style a {
-  color: #e74c3c;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.common-table-style a:hover {
-  text-decoration: underline;
-}
-
-.common-table-style td:last-child {
-  text-align: center;
-}
-.event-image,
-.venue-image {
-  width: 50px; /* Adjust size as needed */
-  height: 30px;
-  border-radius: 5px; /* Optional, for rounded corners */
-}
-/* Style for action icons (edit and delete) */
-.action-icons {
-  text-align: center;
-}
-
-.action-icons {
-  margin: 0 10px;
-  color: #3498db;
-  font-size: 20px;
-  transition: color 0.3s ease;
-}
-
-.action-icons a:hover {
-  color: #e74c3c; /* Highlighted color on hover */
-}
-
-.edit-btn i {
-  color: #27ae60; /* Edit icon color */
-}
-
-.delete-icon i {
-  color: #e74c3c; /* Delete icon color */
-}
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
-
-  .main-content {
-    margin-left: 0;
-  }
-
-  .sidebar ul li a {
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .modal-content {
-    width: 90%; /* Full width on smaller screens */
-    padding: 20px; /* Less padding */
-    margin: auto;
-  }
-
-  .modal-content input[type="text"],
-  .modal-content input[type="email"],
-  .modal-content input[type="password"] {
-    padding: 9px;
-    /* Less padding */
-    font-size: 14px; /* Smaller font size */
-  }
-  .modal-content button {
-    padding: 10px; /* Adjust button padding */
-    font-size: 16px; /* Smaller button font size */
-  }
-}
-.ticket-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.ticket-controls input[type="text"] {
-  width: 70%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #bdc3c7;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s ease;
-}
-
-.ticket-controls input[type="text"]:focus {
+.admin-actions input:focus, 
+.admin-actions select:focus {
   border-color: #2980b9;
 }
 
-.ticket-controls select {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #bdc3c7;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.admin-actions input[type="text"], 
+.admin-actions input[type="password"], 
+.admin-actions input[type="email"], 
+.admin-actions select {
+  width: 200px;
 }
 
-/* Ticket List */
-.ticket-list {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.ticket-item {
-  background-color: #f4f7f6;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  border-left: 5px solid #3498db;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.ticket-item:hover {
-  background-color: #ecf0f1;
-}
-
-.ticket-item h4 {
-  margin: 0 0 5px 0;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-content {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  max-width: 700px;
-  width: 100%;
-  height: auto;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  position: relative;
-}
-
-/* Exit Button (styled better, aligned to the right) */
-.exit-button {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  position: absolute;
-  right: 20px; /* Shifted right */
-  top: 20px;
-}
-
-.exit-button:hover {
-  background-color: #c0392b;
-}
-
-/* Ticket Info */
-#ticket-info {
-  background-color: #f4f7f6;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-#ticket-info h4 {
-  font-size: 20px;
-  margin-bottom: 10px;
-}
-
-#ticket-info p {
-  font-size: 16px;
-  margin: 0;
-}
-
-/* Chat Box */
-.chat-box {
-  background-color: #fff;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  height: 300px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.chat-input-container {
-  display: flex;
-  margin-top: 10px;
-}
-
-.chat-input-container textarea {
-  flex-grow: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-right: 10px;
-}
-
-.chat-input-container button {
+.admin-actions button {
   background-color: #27ae60;
-  color: white;
+  color: #ffffff;
   border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
   padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  font-weight: bold;
 }
 
-.chat-input-container button:hover {
+.admin-actions button:hover {
   background-color: #219150;
+  transform: scale(1.05);
 }
 
-/* Message Styling */
-.message {
+/* Table Styles */
+table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #2980b9;
+  color: #ffffff;
+  font-size: 18px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+td:hover {
   background-color: #ecf0f1;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
 }
 
-.message p {
-  margin: 5px 0;
+td:last-child {
+  text-align: center;
 }
 
-.message strong {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.message.admin {
-  background-color: #3498db;
-  color: white;
-}
-
-.message.customer {
-  background-color: #e74c3c;
-  color: white;
-}
-
-/* Ticket Status Container */
-.ticket-status-container {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-}
-
-.ticket-status-container label {
-  font-weight: bold;
-  margin-right: 10px;
-  color: #34495e;
-}
-
-.ticket-status-container select {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  background-color: #ecf0f1;
+/* Action Buttons */
+td button {
   font-size: 14px;
-  color: #2c3e50;
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
-
-  .main-content {
-    margin-left: 0;
-  }
-
-  .sidebar ul li a {
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .modal-content {
-    width: 90%;
-    padding: 20px;
-    margin: auto;
-    height: 90%;
-    overflow-y: auto;
-  }
-
-  .chat-box {
-    height: 250px;
-  }
-
-  .chat-input-container textarea {
-    padding: 8px;
-    font-size: 14px;
-  }
-
-  .chat-input-container button {
-    padding: 8px;
-    font-size: 14px;
-  }
-
-  .ticket-status-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .ticket-status-container label {
-    margin-bottom: 5px;
-  }
-}
-/* Ticket Status Container */
-.ticket-status-container {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Adds space between the select dropdown and confirm button */
-}
-
-.ticket-status-container label {
   font-weight: bold;
-  margin-right: 10px;
-  color: #34495e;
-}
-
-.ticket-status-container select {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  background-color: #ecf0f1;
-  font-size: 14px;
-  color: #2c3e50;
-}
-
-/* Confirm Button */
-.ticket-status-container button {
-  background-color: #27ae60; /* Default green background */
-  color: white;
+  padding: 8px 15px;
   border: none;
-  padding: 12px 25px; /* Increased padding for a more prominent button */
-  font-size: 16px; /* Larger text size */
-  border-radius: 30px; /* Rounded corners for a modern look */
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover transitions */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: all 0.3s ease;
 }
 
-/* Disabled Button */
-.ticket-status-container button:disabled {
-  background-color: #bdc3c7; /* Light gray background for disabled state */
-  cursor: not-allowed; /* Not-allowed cursor for disabled state */
-  box-shadow: none; /* Remove shadow for disabled state */
+td .delete-icon {
+  background-color: #e74c3c;
+  color: #ffffff;
 }
 
-/* Hover Effect for Active Confirm Button */
-.ticket-status-container button:hover:not(:disabled) {
-  background-color: #2ecc71; /* Lighter green on hover */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Increased shadow on hover */
-  transform: translateY(-2px); /* Slight lift effect on hover */
+td .delete-icon:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
 }
 
-/* Focus Effect */
-.ticket-status-container button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.5); /* Focus ring for accessibility */
+td .edit-icon {
+  background-color: #3498db;
+  color: #ffffff;
+}
+
+td .edit-icon:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-actions {
+      width: 95%;
+      padding: 15px;
+  }
+
+  table {
+      width: 95%;
+  }
+
+  th, td {
+      padding: 10px;
+      font-size: 14px;
+  }
+
+  td button {
+      padding: 5px 10px;
+      font-size: 12px;
+  }
 }

@@ -9,6 +9,7 @@ body {
 
 /* Footer styles */
 footer {
+  background: linear-gradient(to top, white,white,#ffcd0357, #ffcd037f);
   flex-direction: column; /* Arrange items vertically */
   padding: 20px 40px;
   color: #000;

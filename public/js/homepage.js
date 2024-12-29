@@ -1,91 +1,54 @@
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Event data array
-    const eventData = [
-        {
-            title: "INTIFADET ILMOND",
-            date: "Nov 15",
-            time: "07:00pm",
-            organizer:"../images/images.png",
-            venue: "Zed Park - El Sheikh Zayed",
-            image: "../images/event1.png"
-        },
-        {
-            title: "MEMO",
-            date: "Nov 7",
-            time: "09:00pm",
-            organizer:"../images/organizerslogo.png",
-            venue: "Grand Nile Tower",
-            image: "../images/eventMemo.png"
-        },
-        {
-            title: "Amr Diab & Desiree",
-            date: "Nov 08",
-            time: "11:00pm",
-            organizer:"../images/images.png",
-            venue: "Cairo Gate Compound - Emaar",
-            image: "../images/event3.png"
-        }
-        
-    ];
-
+document.addEventListener("DOMContentLoaded", function () {
+    const slider = document.querySelector(".ticket-slider");
+    const tickets = document.querySelectorAll(".ticket");
     let currentIndex = 0;
-    const ticket = document.querySelector('.ticket');
+    
+     
+
+    if (tickets.length > 1) {
+        setInterval(() => {
+            tickets.forEach((ticket, index) => {
+                ticket.style.transform = `translateX(-${currentIndex * 100}%)`;
+            });
+            currentIndex = (currentIndex + 1) % tickets.length;
+        }, 3000); // Change slide every 3 seconds
+    }
+
     const hotEvents = document.querySelectorAll('.hot-event');
 
     function updateTicket(index) {
-        const data = eventData[index];
-        
+        const data = eventData[index]; // Use the dynamic eventData array
+        const ticket = tickets[index];
+
         // Add slide-out animation
         ticket.classList.add('slide-out');
-        
+
         setTimeout(() => {
-            // Update content
             const eventDetails = ticket.querySelector('.event-details');
-            eventDetails.querySelector('h2').textContent = data.title;
-            eventDetails.querySelectorAll('p')[0].innerHTML = `${data.date} | ${data.time}`;
-            eventDetails.querySelectorAll('p')[1].innerHTML = `${data.venue}`;
-            
-            // Update image
+            eventDetails.querySelector('h2').textContent = data.Name; // Using 'Name' from PHP data
+            eventDetails.querySelectorAll('p')[0].innerHTML = `${data.Created_At} | ${data.Status}`;
+            eventDetails.querySelectorAll('p')[1].innerHTML = `${data.Category}`;
+
             const eventImage = ticket.querySelector('.event-image');
             eventImage.src = data.image;
-            
-            // Remove slide-out and prepare for slide-in
+
             ticket.classList.remove('slide-out');
             ticket.classList.add('slide-in');
-            
-            // Remove slide-in after animation
-            setTimeout(() => {
-                ticket.classList.remove('slide-in');
-            }, 50);
+
+            setTimeout(() => ticket.classList.remove('slide-in'), 50);
         }, 500);
 
-        // Update hot events highlighting
         updateHotEvents(index);
     }
 
-    function updateHotEvents(activeIndex) {
-        hotEvents.forEach((event, index) => {
-            // Set background image
-            event.style.backgroundImage = `url(${eventData[index].image})`;
-            // Update active state
-            if (index === activeIndex) {
-                event.classList.add('active');
-            } else {
-                event.classList.remove('active');
-            }
-        });
-    }
 
     function slideToNextEvent() {
         currentIndex = (currentIndex + 1) % eventData.length;
         updateTicket(currentIndex);
     }
 
-    // Initialize first event and hot events
     updateTicket(0);
 
-    // Add click handlers to hot events
     hotEvents.forEach((event, index) => {
         event.addEventListener('click', () => {
             if (index !== currentIndex) {
@@ -95,53 +58,80 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Start the slideshow
     setInterval(slideToNextEvent, 5000);
 
-    // Add login/signup button functionality
+    // Login/Signup Button
     const loginSignupBtn = document.querySelector('.login-signup-btn');
     if (loginSignupBtn) {
-        loginSignupBtn.addEventListener('click', function() {
-            window.location.href = 'login_Signup.php'; // or your login page URL
+        loginSignupBtn.addEventListener('click', function () {
+            window.location.href = 'login_Signup.php';
         });
     }
 
-// Current page index and settings for the slider
-let currentUpcomingPage = 0;
-const eventsPerPage = 3;
-const events = document.querySelectorAll('.upcoming-event');
-const maxPages = Math.ceil(events.length / eventsPerPage);
+    // Upcoming Events Slider
+    const upcomingEventsSlider = document.querySelector('.upcoming-events-slider');
+    const events = document.querySelectorAll('.upcoming-event');
+    const prevBtn = document.getElementById('new-prev-btn');
+    const nextBtn = document.getElementById('new-next-btn');
+    const eventsPerPage = 3;
+    const maxIndex = Math.max(0, events.length - eventsPerPage);
 
-// Function to update visible events based on the current page
-function updateUpcomingEventsVisibility() {
-    const startIdx = currentUpcomingPage * eventsPerPage;
-    events.forEach((event, index) => {
-        if (index >= startIdx && index < startIdx + eventsPerPage) {
-            event.style.display = 'block';
-        } else {
-            event.style.display = 'none';
+   function updateSliderPosition() {
+        const translateX = -currentIndex * (100 / eventsPerPage);
+        upcomingEventsSlider.style.transform = `translateX(${translateX}%)`;
+    }
+
+    function updateNavigationButtons() {
+        prevBtn.disabled = currentIndex <= 0;
+        nextBtn.disabled = currentIndex >= maxIndex;
+        
+        prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
+        nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSliderPosition();
+            updateNavigationButtons();
         }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < maxIndex) {
+            currentIndex++;
+            updateSliderPosition();
+            updateNavigationButtons();
+        }
+    });
+
+    // Initialize buttons state
+    updateNavigationButtons();
+});
+
+
+
+const tickets = document.querySelectorAll('.ticket');
+const hotEvents = document.querySelectorAll('.hot-event');
+
+function syncHotEventsToTickets(index) {
+    // Highlight the correct hot event
+    hotEvents.forEach((event, i) => {
+        event.classList.toggle('active', i === index);
+    });
+
+    // Optionally scroll the ticket slider to the corresponding ticket
+    tickets.forEach((ticket, i) => {
+        ticket.style.transform = `translateX(-${index * 100}%)`;
     });
 }
 
-// Previous and next navigation button event listeners
-const prevBtn = document.getElementById('new-prev-btn');
-const nextBtn = document.getElementById('new-next-btn');
-
-prevBtn.addEventListener('click', () => {
-    if (currentUpcomingPage > 0) {
-        currentUpcomingPage--;
-        updateUpcomingEventsVisibility();
-    }
+// Add event listeners to hot events
+hotEvents.forEach((event, index) => {
+    event.addEventListener('click', () => {
+        syncHotEventsToTickets(index);
+    });
 });
 
-nextBtn.addEventListener('click', () => {
-    if (currentUpcomingPage < maxPages - 1) {
-        currentUpcomingPage++;
-        updateUpcomingEventsVisibility();
-    }
-});
-
-// Initialize the event visibility for the first load
-updateUpcomingEventsVisibility();
-});
+// Add an initial sync for page load
+syncHotEventsToTickets(0);
