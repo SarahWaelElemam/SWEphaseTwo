@@ -7,8 +7,8 @@
 body {
     font-family: Arial, sans-serif;
     transition: background-color 0.3s, color 0.3s;
-    background: linear-gradient(to top, white,white,white, #ffcd037f);
-    height: 142vh;
+    background: linear-gradient(to top, white,white,#ffcd0357, #ffcd037f);
+    height: 100%;
 }
 
 header {
@@ -28,15 +28,13 @@ header {
     width: calc(100% - 40px);
     margin: auto;
 }
-
+ 
 .navbar .logo img{
     height: 6rem;
     width: 7rem;
     margin-left: 1rem;
 }
 
-
-/* Search bar */
 .search-container {
     display: flex;
     align-items: center;
@@ -136,7 +134,9 @@ input:checked + .slider:before {
     color: #ffce6b;
 }
 
-/* Menu Toggle Button */
+.logo img a:hover{
+    text-decoration: none;
+}
 .menu-toggle {
     display: none;
     background: none;

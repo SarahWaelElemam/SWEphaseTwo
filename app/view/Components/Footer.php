@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,7 +29,6 @@
             <li><a href="file.php">Contact Us</a></li>
             <li><a href="AboutUs.php">Careers</a></li>
             <li><a href="PrivPol.php">Policies</a></li>
-            <li><a href="#">FAQs</a></li>
           </ul>
         </div>
 

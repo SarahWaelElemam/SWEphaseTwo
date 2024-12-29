@@ -9,6 +9,7 @@ body {
 
 /* Footer styles */
 footer {
+  background: linear-gradient(to top, white,white,#ffcd0357, #ffcd037f);
   flex-direction: column; /* Arrange items vertically */
   padding: 20px 40px;
   color: #000;
@@ -24,7 +25,7 @@ align-items: flex-start;
 padding: 20px 0;
 gap: 40px; /* Spacing between each section */
 }
-
+ 
 /* Footer Left with Image and Links */
 .footer-left {
 display: flex;

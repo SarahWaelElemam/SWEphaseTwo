@@ -1,4 +1,4 @@
-<?php
+<?php 
 // You can include dynamic variables here if necessary
 $title = "About Us - TicketsMarche";
 $companyName = "TixCarte";
@@ -13,18 +13,21 @@ $solutionText = "These technologies lead to quicker, more accurate and obviously
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?php echo $title; ?></title>
-    <link rel="stylesheet" href="../public/css/AboutUs.css"> <!-- Include your CSS file here -->
+    <link rel="stylesheet" href="../../../public/css/AboutUs.css">
 </head>
 <body>
-    <?php include "../Components/NavBar.php"?>
-    </header>
-    
+
+<?php include "../Components/NavBar.php"; ?>
     <section class="about-us">
-        <h2>About Us</h2>
-        <p><?php echo $aboutText; ?></p>
-        <p><?php echo $techText; ?></p>
-        <p><?php echo $solutionText; ?></p>
+        <div class="divA">
+            <h2>About Us</h2>
+            <div class="divb">
+                <p><?php echo $aboutText; ?></p>
+                <p><?php echo $techText; ?></p>
+                <p><?php echo $solutionText; ?></p>
+            </div>
+        </div>
     </section>
-    <?php include "../Components/Footer.php"?>
+    <?php include "../Components/Footer.php"; ?>
 </body>
 </html>

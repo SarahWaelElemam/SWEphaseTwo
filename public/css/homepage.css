@@ -2,58 +2,35 @@
     user-select: none;
     transition: 0.3s;
     font-family: "Roboto", sans-serif;
+    overflow-x: hidden;
 }
 
 body, html {
     background: linear-gradient(to top, white,white, #ffcd037f);
     margin: 0;
     padding: 0;
-    height: 100%;
+    height: 100vh;
     overflow-x: hidden;
 }
 
 .ticket-container {
+    overflow-x: hidden;
     width: 100%;
-    height: calc(100vh - 190px); /* Reduced height to move ticket up */
-    display: flex;
-    
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    padding-top: 20px; /* Add some padding at the top */
-    
 }
 
 .ticket-slider {
-    position: relative;
-    width: 100%;
-    height: 80%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    transition: transform 0.5s ease-in-out;
 }
 
 .ticket {
-    position: absolute;
-    width: 90%;
-    max-width: 1200px;
-    gap: 10px;
-    height: 120%;
+    flex: 0 0 100%; /* Each ticket takes 100% width */
     display: flex;
-    opacity: 1;
-    transform: translateX(0);
-    transition: transform 0.5s ease, opacity 0.5s ease;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
-
-.ticket.slide-out {
-    transform: translateX(-100%);
-    opacity: 0;
-}
-
-.ticket.slide-in {
-    transform: translateX(100%);
-    opacity: 0;
-}
+ 
 
 .basic {
     flex: 2;
@@ -79,11 +56,12 @@ body, html {
 .basic button{
     padding: 1rem;
     margin: 1rem;
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: white;
-    background-color: #ffcd0373;
+    background-color: #ffcd038a;
     border-color: transparent;
     border-radius: 2rem;
+    font-weight:bold;
 }
 .basic button:hover{
     background-color: #ffcd03;
@@ -91,6 +69,7 @@ body, html {
 .event-details p {
     font-size: 1.2em;
     margin-bottom: 10px;
+    color: gray;
 }
 .basic p img{
     width: 15rem;
@@ -168,29 +147,69 @@ body, html {
 .hot-events-container {
     text-align: center;
     margin-top: 20px;
+    margin-left: 2rem;
 }
 
+/* First add these styles to your existing CSS */
 .hot-events-slider {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    position: relative;
+    margin-left: 5rem;
+}
+
+.hot-events-slider::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .hot-event {
-    width: 300px;
+    flex: 0 0 300px; /* Fixed width */
     height: 200px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
+    margin-right: 20px;
     background-size: cover;
     background-position: center;
-    transition: all 0.3s ease;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+/* Style for the scroll buttons */
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
     cursor: pointer;
-    border: 3px solid transparent;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.scroll-left {
+    left: 10px;
+}
+
+.scroll-right {
+    right: 10px;
+}
+
+/* Hide scroll buttons when not needed */
+.scroll-button.hidden {
+    display: none;
 }
 
 .hot-event.active {
-    border: 5px solid #ffffff; /* Highlighted border color */
+    border: 5px solid rgba(255, 169, 8, 0.853);; /* Highlighted border color */
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -219,44 +238,83 @@ body, html {
 
 
 .upcoming-events-container {
-    text-align: center;
-    margin: 40px auto;
-    max-width: 1200px;
-    padding: 0 20px;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    margin-left: 3rem;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.new-nav-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.new-nav-btn:hover {
+    background: #f5f5f5;
 }
 
 .upcoming-events-slider {
     display: flex;
-    transition: transform 0.5s ease;
     gap: 20px;
     overflow: hidden;
-    width: 100%;
+    position: relative;
 }
-
 
 .upcoming-event {
-    flex: 1 0 calc(33.333% - 20px); /* 3 items per row */
-    max-width: 300px;
-    height: 200px;
+    min-width: calc(33.333% - 14px);
+    position: relative;
     border-radius: 10px;
     overflow: hidden;
-    flex-shrink: 0;
-    position: relative;
-    left: 110px; /* Adjust this value to shift the container precisely */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
 }
 
-.upcoming-event:hover {
+.upcoming-event .event-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    translate: 1rem;
+}
+
+.upcoming-event .event-content {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.853);
+    position: relative;
+    z-index: 1;
+}
+
+.upcoming-event h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.upcoming-event p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: gray;
+}
+.upcoming-event:hover{
     transform: scale(1.05);
     border-color: #fedda8;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.upcoming-event img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-}
 /* Navigation Buttons */
 .navigation-buttons {
     display: flex;
@@ -455,6 +513,7 @@ font-family: 'Times New Roman', Times, serif;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible;
 }
 .user-icon img{
     width: 7rem;
@@ -485,4 +544,130 @@ font-family: 'Times New Roman', Times, serif;
 
 .login-signup-section button:hover {
     background-color: #ffd400;
+}
+.container {
+    text-align: center;
+    margin: 40px auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.upcomingg-events-slider {
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.upcomingg-event {
+    flex: 1 0 calc(33.333% - 20px); /* 3 items per row */
+    max-width: 300px;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.upcomingg-event:hover {
+    transform: scale(1.05);
+    border-color: #fedda8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.upcomingg-event img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.event-content {
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+}
+
+.event-content h2 {
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+
+.event-content p {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+
+.ticket {
+    flex: 0 0 100%;
+    display: flex;
+    flex-direction: row; /* Changed from column to row */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* Added gap between boxes */
+    padding: 2rem;
+}
+
+.basic {
+    flex: 0.35;
+    background: #ffffffba;
+    border-radius: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.292);
+    height: 400px; /* Fixed height */
+}
+
+.event-image-box {
+    flex: 1;
+    height: 400px;
+    border-radius: 5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.292);
+    min-width: 300px;
+    max-width: 50%;
+    display: flex; /* Add this */
+    align-items: center; /* Add this */
+    justify-content: center; /* Add this */
+}
+
+.event-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top; /* Add this */
+}
+
+@media screen and (max-width: 768px) {
+    .ticket {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .event-image-box {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+
+
+
+
+
+
+.upcoming-event:hover {
+    transform: scale(1.05);
+    border-color: #fedda8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

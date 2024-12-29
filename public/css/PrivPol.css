@@ -9,8 +9,6 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    background-color: #f9f9f9;  /* Light gray background */
-    color: #333;
     margin: 0;
     padding: 0;
 }
@@ -25,11 +23,11 @@ header {
 h4 {
     font-family: "Times New Roman", Times, serif; /* Times New Roman font */
     font-size: 1.2em; /* Reduced size */
-    font-weight: 300; /* Lighter weight for a thinner look */
+    font-weight: 700; /* Lighter weight for a thinner look */
     margin-bottom: 20px;
-    color: #333;
+    color: #ffa600;
 }
-
+ 
 header .logo h1 {
     margin: 0;
     font-size: 2.5em;
@@ -69,7 +67,7 @@ header .logo h1 {
 h2 {
     font-family: "Times New Roman", Times, serif; /* Times New Roman font */
     font-size: 2em; /* Maintain size */
-    font-weight: 300; /* Lighter weight for a thinner look */
+    font-weight: 600; /* Lighter weight for a thinner look */
     margin-bottom: 20px;
     color: #333;
 }
@@ -81,8 +79,18 @@ p {
     line-height: 1.8;
     color: #666;
 }
-
-footer p {
-    color: black; /* Set text color to black */
-    font-size: 1.5em;
+.content{
+    background-color: #b4b4b443;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+.infoo{
+    margin-top: 2rem;
+    background: linear-gradient(to right, white,white,#ffcd0357, #ffcd037f);
+    margin-bottom: -3.8rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    justify-content: right;
+    align-items: right;
+    justify-items: right;
 }

@@ -7,4 +7,4 @@ abstract class Controller
         $this->model = $model;
     }
 }
-?>
+?> 

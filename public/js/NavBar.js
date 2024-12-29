@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         menuToggle.querySelectorAll('span').forEach((span, index) => {
             if (menuToggle.classList.contains('active')) {
-                if (index === 0) span.style.transform = 'rotate(45deg) translate(5px, 5px)';
+                 if (index === 0) span.style.transform = 'rotate(45deg) translate(5px, 5px)';
                 if (index === 1) span.style.opacity = '0';
                 if (index === 2) span.style.transform = 'rotate(-45deg) translate(7px, -7px)';
             } else {
