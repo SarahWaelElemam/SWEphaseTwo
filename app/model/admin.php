@@ -25,15 +25,6 @@ class Admin
         return $stmt->execute([$newStatus, $eventId]);
     }
 
-    /**
-     * Fetch all events with their details
-     */
-    public function getAllEvents()
-    {
-        $sql = "SELECT * FROM events ORDER BY created_at DESC";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+ 
 }
 ?>

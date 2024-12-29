@@ -20,7 +20,9 @@ class Eventsdb extends Model {
         
         return $events;
     }
+
     public function getAllEvents() {
+        // First query to get all events
         $sql = "SELECT * FROM events";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -30,7 +32,23 @@ class Eventsdb extends Model {
         while ($row = $result->fetch_assoc()) {
             $events[] = $row;
         }
-
+    
+        // Second query to get tickets for each event
+        $tickets = [];
+        $ticketSql = "SELECT * FROM tickets";
+        $ticketStmt = $this->conn->prepare($ticketSql);
+        $ticketStmt->execute();
+        $ticketResult = $ticketStmt->get_result();
+    
+        while ($ticketRow = $ticketResult->fetch_assoc()) {
+            $tickets[$ticketRow['Event_ID']][] = $ticketRow;
+        }
+    
+        // Add tickets data to events
+        foreach ($events as &$event) {
+            $event['tickets'] = isset($tickets[$event['Event_ID']]) ? $tickets[$event['Event_ID']] : [];
+        }
+    
         return $events;
     }
 

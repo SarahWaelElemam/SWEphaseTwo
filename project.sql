@@ -67,21 +67,20 @@ INSERT INTO `Events` (
 CREATE TABLE `Tickets` (
   `Ticket_ID` INT(11) NOT NULL AUTO_INCREMENT,
   `Event_ID` INT(11) NOT NULL,
+  `Category` ENUM('VIP', 'Platinum', 'Gold', 'Silver', 'Bronze') NOT NULL,
   `Price` INT(11) NOT NULL,
-  `Status` ENUM('Available', 'Sold', 'Refunded') NOT NULL,
-  `Created_At` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `Quantity` INT(11) NOT NULL,
+  `Available` INT(11) NOT NULL, -- To track remaining tickets
   PRIMARY KEY (`Ticket_ID`),
-  FOREIGN KEY (`Event_ID`) REFERENCES `Events`(`Event_ID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
+  FOREIGN KEY (`Event_ID`) REFERENCES `Events`(`Event_ID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Insert data into Tickets table
-INSERT INTO `Tickets` (`Event_ID`, `Price`, `Status`) VALUES
-(1, 500, 'Available'),
-(2, 300, 'Sold'),
-(3, 400, 'Refunded'),
-(4, 700, 'Available');
+INSERT INTO `Tickets` (`Event_ID`, `Category`, `Price`, `Quantity`, `Available`) VALUES
+(1, 'VIP', 500, 100, 100),
+(1, 'Gold', 300, 200, 150),
+(1, 'Platinum', 400, 150, 100),
+(2, 'Silver', 700, 50, 50);
 
 -- Table 4: HelpRequest
 CREATE TABLE `HelpRequest` (

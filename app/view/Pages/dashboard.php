@@ -184,11 +184,7 @@ $events = $eventsDb->getAllEvents();
     <form id="viewEventForm" method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" enctype="multipart/form-data">
     <!-- Hidden field for event ID -->
       <input type="hidden" name="eventId" id="viewEventId">
-      <!-- Event Image -->
-
-
-
-<!-- Venue Image -->
+    
 
       <!-- Event Details Section -->
       <h3>Event Details</h3>
@@ -210,17 +206,8 @@ $events = $eventsDb->getAllEvents();
         <label><input type="radio" name="viewEventType" value="Exhibition" disabled> Exhibition</label>
       </div>
 
-      <!-- Event Status Section -->
-      <h3>Status</h3>
-  <div class="input-group">
-    <label for="viewEventStatus">Change Status:</label>
-    <select id="viewEventStatus" name="viewEventStatus">
-    <option value="Pending">Pending</option>
-    <option value="Accepted">Accepted</option>
-    <option value="Rejected">Rejected</option>
-    <!-- Add other options as necessary -->
-</select>
-  </div>
+      <div id="viewEventTickets"></div>
+
 
       <!-- Location Section -->
       <h3>Location</h3>
@@ -256,7 +243,8 @@ $events = $eventsDb->getAllEvents();
         <label for="viewOrganizerName">Organizer Name:</label>
         <input type="text" id="viewOrganizerName" name="viewOrganizerName" readonly>
       </div>
-
+      <img id="viewOrganizerLogo" alt="Organizer Logo" 
+      style="width: 100%; max-width: 200px; height: 250px; border-radius: 8px; object-fit: cover; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
       <!-- Venue Facilities -->
       <h3>Venue Facilities</h3>
       <div class="input-group">
@@ -270,6 +258,30 @@ $events = $eventsDb->getAllEvents();
         <label for="viewVenueProfileLink">Venue Profile Link:</label>
         <input type="text" id="viewVenueProfileLink" name="viewVenueProfileLink" readonly>
       </div>
+
+    <!-- Event Status Section -->
+<h3>Status</h3>
+<div class="input-group" style="margin-top: 20px; margin-bottom: 20px;">
+  <label for="viewEventStatus" 
+         style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 16px; color: #333;">
+    Change Status:
+  </label>
+  <select id="viewEventStatus" name="viewEventStatus" 
+          style="width: 100%; max-width: 300px; padding: 10px; font-size: 14px; border: 1px solid #ccc; 
+                 border-radius: 8px; background-color: #f9f9f9; transition: all 0.3s ease; 
+                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
+          onmouseover="this.style.backgroundColor='#fff'; this.style.borderColor='#007bff'; 
+                       this.style.boxShadow='0 4px 8px rgba(0, 123, 255, 0.2)';"
+          onmouseout="this.style.backgroundColor='#f9f9f9'; this.style.borderColor='#ccc'; 
+                      this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)';"
+          onfocus="this.style.outline='none'; this.style.borderColor='#0056b3'; 
+                   this.style.boxShadow='0 4px 10px rgba(0, 86, 179, 0.3)';">
+    <option value="Pending">Pending</option>
+    <option value="Accepted">Accepted</option>
+    <option value="Rejected">Rejected</option>
+    <!-- Add other options as necessary -->
+  </select>
+</div>
         <!-- Submit Button -->
   <div class="input-group">
     <button type="submit" name="updateStatus">Update Status</button>
@@ -302,7 +314,7 @@ $events = $eventsDb->getAllEvents();
     <tbody id="eventsTableBody">
         <?php foreach ($events as $event): ?>
 
-            <?php
+         <?php
                 // Determine the class based on the event's status
                 $statusClass = '';
                 $statusText = '';
@@ -316,8 +328,9 @@ $events = $eventsDb->getAllEvents();
                     $statusClass = 'accepted-status';  // Green
                     $statusText = 'Accepted';
                 }
-            ?>
-            
+     ?>
+           
+    
             <tr class="event-row">
             
                 <td><?php echo htmlspecialchars($event['Event_ID']); ?></td>
@@ -388,7 +401,9 @@ $events = $eventsDb->getAllEvents();
                         unset($eventData['Venue_Image']);
                         unset($eventData['Organizer_Logo']);
                         $eventData['Image'] = base64_encode($event['Image']);
-       $eventData['Venue_Image'] = base64_encode($event['Venue_Image']);
+                        $eventData['Venue_Image'] = base64_encode($event['Venue_Image']);
+                        $eventData['Organizer_Logo'] = base64_encode($event['Organizer_Logo']);
+
                     ?>
                     <button class="edit-btn" onclick='openViewEventModal(<?php echo json_encode($eventData); ?>)'>
                         <i class="fas fa-edit"></i>
@@ -586,26 +601,60 @@ function openViewEventModal(eventData) {
         }
         // Display event image from blob
         
-            const eventImageBase64 = eventData.Image;  // Base64-encoded image
-            const venueImageBase64 = eventData.Venue_Image;  // Base64-encoded image
+        const eventImageBase64 = eventData.Image;  // Base64-encoded image
+        const venueImageBase64 = eventData.Venue_Image;  // Base64-encoded image
+        const organizerLogoBase64 = eventData.Organizer_Logo;  // Base64-encoded organizer logo
 
-            const eventImage = document.getElementById('viewEventImage');
-            if (eventImageBase64) {
-            eventImage.src = `data:image/jpeg;base64,${eventImageBase64}`;
-            } else {
-            eventImage.src = 'placeholder.jpg';  // Fallback to a placeholder
-            }
+const eventImage = document.getElementById('viewEventImage');
+if (eventImageBase64) {
+    eventImage.src = `data:image/jpeg;base64,${eventImageBase64}`;
+} else {
+    eventImage.src = 'placeholder.jpg';  // Fallback to a placeholder
+}
 
-            const venueImage = document.getElementById('viewVenueImage');
-            if (venueImageBase64) {
-            venueImage.src = `data:image/jpeg;base64,${venueImageBase64}`;
-            } else {
-            venueImage.src = 'placeholder.jpg';  // Fallback to a placeholder
-            }
+const venueImage = document.getElementById('viewVenueImage');
+if (venueImageBase64) {
+    venueImage.src = `data:image/jpeg;base64,${venueImageBase64}`;
+} else {
+    venueImage.src = 'placeholder.jpg';  // Fallback to a placeholder
+}
+
+const organizerLogo = document.getElementById('viewOrganizerLogo');
+if (organizerLogoBase64) {
+    organizerLogo.src = `data:image/jpeg;base64,${organizerLogoBase64}`;
+} else {
+    organizerLogo.src = 'placeholder.jpg';  // Fallback to a placeholder
+}
    
    
 
-        console.log(statusDropdown);
+       // Show available tickets (if any)
+       const ticketsSection = document.getElementById('viewEventTickets');
+        if (eventData.tickets && eventData.tickets.length > 0) {
+            // Clear any previous ticket data
+            ticketsSection.innerHTML = '';
+
+            // Loop through the tickets array and create HTML for each ticket
+            eventData.tickets.forEach(ticket => {
+                console.log("Ticket Data:", ticket); // Debugging each ticket's structure
+                const ticketElement = document.createElement('div');
+                ticketElement.classList.add('ticket-item');
+
+                // Check if properties exist and display them
+                const ticketType = ticket.Category || "N/A";
+                const ticketPrice = ticket.Price !== undefined ? `$${ticket.Price}` : "N/A";
+                const ticketAvailableQuantity = ticket.Available !== undefined ? ticket.Available : "N/A";
+
+                ticketElement.innerHTML = `
+                    <p><strong>Ticket Type:</strong> ${ticketType}</p>
+                    <p><strong>Price:</strong> ${ticketPrice}</p>
+                    <p><strong>Available Quantity:</strong> ${ticketAvailableQuantity}</p>
+                `;
+                ticketsSection.appendChild(ticketElement);
+            });
+        } else {
+            ticketsSection.innerHTML = '<p>No tickets available.</p>';
+        }
         // Show the modal if needed
         document.getElementById('viewEventModal').style.display = 'block';
     } catch (error) {

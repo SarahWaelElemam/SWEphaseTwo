@@ -31,13 +31,17 @@
 
 $organizer = new Organizer($conn);
 $events = $organizer->getAllEventsByOrganizerId(
-    2 // Example organizer ID
+    1
+     // Example organizer ID
 );
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventName'])) {
+
+
+
     $name = $_POST['eventName'];
     $description = $_POST['eventDescription'];
     $category = $_POST['eventType'];
-    $createdBy = $_POST['createdBy'];
     $organizerName = $_POST['organizerName'];
     $startDate = $_POST['startDate'];
     $endDate = $_POST['endDate'];
@@ -47,23 +51,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventName'])) {
     $venueProfileLink = $_POST['venueProfileLink'];
 
     // Handle Venue Facilities Correctly
-    $venueFacilitiesString = ""; // Initialize outside the if
-    if (isset($_POST['venueFacilities']) && is_array($_POST['venueFacilities'])) {
-    foreach ($_POST['venueFacilities'] as $facility) {
-        $facility = htmlspecialchars($facility);
-        $venueFacilitiesString .= $facility . ",";
-    }
-    $venueFacilitiesString = rtrim($venueFacilitiesString, ",");
-
-        echo "Venue Facilities String: " . $venueFacilitiesString . "<br>"; // For debugging
-    } else {
-        echo "No facilities selected.<br>"; // For debugging
+    $venueFacilitiesString = ''; 
+    if (isset($_POST['VenueFacilities']) && is_array($_POST['VenueFacilities'])) {
+        foreach ($_POST['VenueFacilities'] as $facility) {
+            $facility = htmlspecialchars($facility); // Sanitize input
+            $venueFacilitiesString .= $facility . ', '; // Concatenate facilities
+        }
+        $venueFacilitiesString = rtrim($venueFacilitiesString, ','); // Remove trailing comma
     }
 
  // Handle File uploads.
  $eventImage = isset($_FILES['eventImage']) && $_FILES['eventImage']['error'] === UPLOAD_ERR_OK ? file_get_contents($_FILES['eventImage']['tmp_name']) : null;
  $venueImage = isset($_FILES['venueImage']) && $_FILES['venueImage']['error'] === UPLOAD_ERR_OK ? file_get_contents($_FILES['venueImage']['tmp_name']) : null;
  $organizerLogo = isset($_FILES['organizerLogo']) && $_FILES['organizerLogo']['error'] === UPLOAD_ERR_OK ? file_get_contents($_FILES['organizerLogo']['tmp_name']) : null;
+
+ // Handle ticket data
+  if (isset($_POST['ticketCategory']) && isset($_POST['ticketPrice']) && isset($_POST['ticketQuantity'])) {
+    $ticketCategories = $_POST['ticketCategory'];
+    $ticketPrices = $_POST['ticketPrice'];
+    $ticketQuantities = $_POST['ticketQuantity'];
+
+    foreach ($ticketCategories as $index => $ticketCategory) {
+        $ticketPrice = $ticketPrices[$index];
+        $ticketQuantity = $ticketQuantities[$index];
+        $availableTickets = $ticketQuantity; // Initially, all tickets are available
+        echo "Event and tickets added successfully!",$ticketCategory,$ticketPrice;
+
+    }
+  }
 
     if (1) {
         $createdBy = 1;
@@ -76,13 +91,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventName'])) {
         $name, $description, $category, $createdBy, $organizerName,
         $startDate, $endDate, $venue, $address, $venueMapLink,
         $venueFacilitiesString, $venueProfileLink,
-        $eventImage, $venueImage, $organizerLogo
+        $eventImage, $venueImage, $organizerLogo, $ticketCategories,
+        $ticketPrices,
+        $ticketQuantities
     );
 
     if ($success) {
-        echo "Event request sent successfully!";
+        echo "Event and tickets have been added successfully!";
     } else {
-        echo "Failed to send event request.";
+        echo "Failed to add event or tickets.";
     }
 
 }
@@ -122,6 +139,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventId'])) {
     $organizerLogo = isset($_FILES['editOrganizerLogo']) && $_FILES['editOrganizerLogo']['error'] === UPLOAD_ERR_OK 
         ? file_get_contents($_FILES['editOrganizerLogo']['tmp_name']) : null;
 
+
+        // Handle ticket data
+        if (isset($_POST['editTicketCategory']) && isset($_POST['editTicketPrice']) && isset($_POST['editTicketQuantity'])) {
+            $ticketCategories = $_POST['editTicketCategory'];
+            $ticketPrices = $_POST['editTicketPrice'];
+            $ticketQuantities = $_POST['editTicketQuantity'];
+
+    foreach ($ticketCategories as $index => $ticketCategory) {
+        $ticketPrice = $ticketPrices[$index];
+        $ticketQuantity = $ticketQuantities[$index];
+        $availableTickets = $ticketQuantity; // Initially, all tickets are available
+        echo "Event and tickets added successfully!",$ticketCategory,$ticketPrice;
+
+    }
+  }
+
     // Get the created by user (this could come from session or other mechanism)
     $createdBy = 1; // Example from session
 
@@ -143,7 +176,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['eventId'])) {
        
         $eventImage,  // This will be null if no new image uploaded
         $venueImage,  // This will be null if no new image uploaded
-        $organizerLogo // This will be null if no new image uploaded
+        $organizerLogo, // This will be null if no new image uploaded
+        $ticketCategories,
+    $ticketPrices ,
+    $ticketQuantities 
     );
 
     if ($success) {
@@ -277,22 +313,21 @@ if (isset($_GET['delete_event_id'])) {
                 <div class="error-message" id="endDateError"></div>
             </div>
 
-         <!-- Event Access and Ticket Section -->
-         <h3>Access & Tickets</h3>
-            <div id="ticketPriceContainer">
-            <h4>Ticket Prices</h4>
-    <button type="button" onclick="addTicketRow()">Add Ticket Type</button>
-    <div id="ticketRows"></div> 
-                
+        <!-- Event Access & Tickets Section -->
+    <h3>Access & Tickets</h3>
+    <div id="ticketPriceContainer">
+        <h4>Ticket Prices</h4>
+        <!-- Default Ticket Type Section -->
+        <button type="button" onclick="addTicketRow()">Add Ticket Type</button>
+        <div class="input-group ticketRow" id="ticketRows">
+        
+        </div>
             </div>
+
 
             <!-- Organizer Section -->
             <h3>Organizer Details</h3>
-            <div class="input-group">
-                <label for="createdBy">Organizer:</label>
-                <input type="text" id="createdBy" name="createdBy" required>
-                <div class="error-message" id="createdByError"></div>
-            </div>
+            
             <div class="input-group">
                 <label for="organizerName">Organizer Name:</label>
                 <input type="text" id="organizerName" name="organizerName">
@@ -305,28 +340,17 @@ if (isset($_GET['delete_event_id'])) {
     <div class="error-message" id="organizerLogoError"></div>
   </div>
 
-            <!-- Event Status and Recurrence Section -->
-            <h3>Status & Recurrence</h3>
-            <div class="input-group">
-                <label for="eventStatus">Event Status:</label>
-                <select id="eventStatus" name="eventStatus">
-                    
-                    <option value="Accepted">Accepted</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
-                <div class="error-message" id="eventStatusError"></div>
-            </div>
+            
 
             <!-- Venue Facilities Section -->
             <h3>Venue Facilities</h3>
             <div class="input-group">
                 <label>Facilities Available:</label>
-                <label><input type="checkbox" name="editVenueFacilities[]" value="Bathrooms"> Bathrooms</label>
-    <label><input type="checkbox" name="editVenueFacilities[]" value="Food Services"> Food Services</label>
-    <label><input type="checkbox" name="editVenueFacilities[]" value="Parking"> Parking</label>
-    <label><input type="checkbox" name="editVenueFacilities[]" value="Security"> Security</label>
-    
+                <label><input type="checkbox" name="VenueFacilities[]" value="Bathrooms"> Bathrooms</label>
+                <label><input type="checkbox" name="VenueFacilities[]" value="Food Services"> Food Services</label>
+                <label><input type="checkbox" name="VenueFacilities[]" value="Parking"> Parking</label>
+                <label><input type="checkbox" name="VenueFacilities[]" value="Security"> Security</label>
+                
                 <div class="error-message" id="venueFacilitiesError"></div>
             </div>
             <div class="input-group">
@@ -415,13 +439,17 @@ if (isset($_GET['delete_event_id'])) {
                 <div class="error-message" id="editEndDateError"></div>
             </div>
 
-            <!-- Ticket Section -->
-            <h3>Access & Tickets</h3>
-            <div id="editTicketPriceContainer">
-                <h4>Ticket Prices</h4>
-                <button type="button" onclick="edit_addTicketRow()">Add Ticket Type</button>
-                <div id="editTicketRows"></div>
-            </div>
+          <!-- Ticket Section -->
+<h3>Access & Tickets</h3>
+<div id="editTicketPriceContainer">
+    <h4>Ticket Prices</h4>
+    <button type="button" onclick="edit_addTicketRow()">Add Ticket Type</button> <!-- Button to add ticket row -->
+    
+    <!-- Container where ticket rows will be inserted -->
+    <div id="editTicketRows">
+        <!-- Dynamic ticket rows will be inserted here -->
+    </div>
+</div>
 
             <!-- Organizer Section -->
             <h3>Organizer Details</h3>
@@ -643,33 +671,55 @@ function deleteEvent(eventId) {
 
 
 
-// Adds a row by making an inactive row active and fills it
+// Function to add new ticket row
 function addTicketRow() {
     const ticketRows = document.getElementById("ticketRows");
     const row = document.createElement("div");
     row.classList.add("ticket-row");
 
     row.innerHTML = `
-        <input type="text" placeholder="Ticket Type (e.g., VIP)" class="ticket-type" required />
-        <input type="number" placeholder="Ticket Price" class="ticket-price" min="0" required />
+        <select name="ticketCategory[]" class="ticket-type" required>
+            <option value="VIP">VIP</option>
+            <option value="Platinum">Platinum</option>
+            <option value="Gold">Gold</option>
+            <option value="Silver">Silver</option>
+            <option value="Bronze">Bronze</option>
+        </select>
+        <input type="number" name="ticketPrice[]" placeholder="Ticket Price" class="ticket-price" min="0" required />
+        <input type="number" name="ticketQuantity[]" placeholder="Quantity" class="ticket-quantity" min="1" required />
         <button type="button" class="remove-ticket" onclick="removeTicketRow(this)">Remove</button>
     `;
+    
     ticketRows.appendChild(row);
 }
-function edit_addTicketRow(){
 
+function edit_addTicketRow() {
     const ticketRows = document.getElementById("editTicketRows");
     const row = document.createElement("div");
     row.classList.add("ticket-row");
 
     row.innerHTML = `
-        <input type="text" placeholder="Ticket Type (e.g., VIP)" class="ticket-type" required />
-        <input type="number" placeholder="Ticket Price" class="ticket-price" min="0" required />
-        <button type="button" class="remove-ticket" onclick="removeTicketRow(this)">Remove</button>
+        <select name="editTicketCategory[]" class="ticket-type" required>
+            <option value="VIP">VIP</option>
+            <option value="Platinum">Platinum</option>
+            <option value="Gold">Gold</option>
+            <option value="Silver">Silver</option>
+            <option value="Bronze">Bronze</option>
+        </select>
+        <input type="number" name="editTicketPrice[]" placeholder="Ticket Price" class="ticket-price" min="0" required />
+        <input type="number" name="editTicketQuantity[]" placeholder="Quantity" class="ticket-quantity" min="1" required />
+        <button type="button" class="remove-ticket">Remove</button>
     `;
-    ticketRows.appendChild(row);
 
+    const removeButton = row.querySelector(".remove-ticket");
+    removeButton.addEventListener("click", function() {
+        editremoveTicketRow(removeButton); // Trigger function on button click
+    });
+
+    ticketRows.appendChild(row);
 }
+
+
 // Remove ticket row
 function removeTicketRow(button) {
     const row = button.parentNode;
@@ -741,10 +791,9 @@ function validateEventForm() {
     
     const address = document.getElementById('address');
     const eventType = document.querySelector('input[name="eventType"]:checked');
-    const createdBy = document.getElementById('createdBy');
+    
     const organizerName = document.getElementById('organizerName');
     const eventImage = document.getElementById('eventImage');
-    const eventStatus = document.getElementById('eventStatus');
     const organizerLogo = document.getElementById('organizerLogo');
     const venueProfileLink = document.getElementById('venueProfileLink');
     const venueMapLink = document.getElementById('venueMapLink');
@@ -759,10 +808,8 @@ function validateEventForm() {
        
         address: 'Address must be at least 5 characters long.',
         eventType: 'Please select an event type.',
-        createdBy: 'Organizer must be specified.',
         organizerName: 'Organizer name must be at least 3 characters long.',
         eventImage: 'Please upload an event image.',
-        eventStatus: 'Please select an event status.',
         organizerLogo: 'Please upload an organizer logo.',
         venueProfileLink: 'Please enter a valid URL for the venue profile.',
         venueMapLink: 'Please enter a valid URL for the venue map.',
@@ -797,10 +844,7 @@ function validateEventForm() {
         setError(address, document.getElementById('addressError'), errors.address);
         isValid = false;
     }
-    if (createdBy.value.length < 3) {
-        setError(createdBy, document.getElementById('createdByError'), errors.createdBy);
-        isValid = false;
-    }
+    
     if (organizerName.value && organizerName.value.length < 3) {
         setError(organizerName, document.getElementById('organizerNameError'), errors.organizerName);
         isValid = false;
@@ -825,10 +869,7 @@ function validateEventForm() {
         setError(venueImage, document.getElementById('venueImageError'), errors.venueImage);
         isValid = false;
     }
-    if (!eventStatus.value) {
-        setError(eventStatus, document.getElementById('eventStatusError'), errors.eventStatus);
-        isValid = false;
-    }
+   
 
     return isValid;
 }
@@ -947,8 +988,8 @@ function validateEditEventForm() {
 
 function openEditEventModal(eventData) {
     console.log("Event data:", eventData); // Log the raw data passed to the function
-    console.log("Venue_Profile_Link:", eventData.Venue_Profile_Link);
-console.log("Venue_Facilities:", eventData.Venue_Facilities);
+    console.log("Tickets data:", eventData.tickets);  // Check if all tickets are present
+
     try {
 
         // Ensure the eventData object is populated with the expected keys
@@ -992,6 +1033,32 @@ console.log("Venue_Facilities:", eventData.Venue_Facilities);
             // Set venue image preview logic (if needed)
             console.log("Venue Image Available:", eventData.Venue_Image);
         }
+
+
+        // Prefill ticket rows
+const ticketRows = document.getElementById("editTicketRows");
+ticketRows.innerHTML = ""; // Clear any existing rows before adding new ones
+
+eventData.tickets.forEach(ticket => {
+    const row = document.createElement("div");
+    row.classList.add("ticket-row");
+
+    // Create and set the ticket row HTML
+    row.innerHTML = `
+        <select name="editTicketCategory[]" class="ticket-type" required>
+            <option value="VIP" ${ticket.Category === "VIP" ? "selected" : ""}>VIP</option>
+            <option value="Platinum" ${ticket.Category === "Platinum" ? "selected" : ""}>Platinum</option>
+            <option value="Gold" ${ticket.Category === "Gold" ? "selected" : ""}>Gold</option>
+            <option value="Silver" ${ticket.Category === "Silver" ? "selected" : ""}>Silver</option>
+            <option value="Bronze" ${ticket.Category === "Bronze" ? "selected" : ""}>Bronze</option>
+        </select>
+        <input type="number" name="editTicketPrice[]" placeholder="Ticket Price" class="ticket-price" min="0" value="${ticket.Price}" required />
+        <input type="number" name="editTicketQuantity[]" placeholder="Quantity" class="ticket-quantity" min="1" value="${ticket.Quantity}" required />
+        <button type="button" class="remove-ticket" onclick="removeTicketRow(this)">Remove</button>
+    `;
+    
+    ticketRows.appendChild(row);  // Add the new ticket row to the container
+});
 
         // Show the modal if needed
         document.getElementById('editEventModal').style.display = 'block';
