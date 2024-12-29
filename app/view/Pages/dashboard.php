@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,6 +26,7 @@
       $conn = $dbh->getConn();
       $admin = new Admin($conn);
 
+$organizer = new Organizer($conn);
       $eventsDb = new Eventsdb($conn);
 
      
@@ -39,6 +40,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updateStatus'])) {
         $message = "Failed to update event status. Please try again.";
     }
 }
+
+
+
+
+
+
+
+
 
 if (isset($_GET['delete_event_id'])) {
     $eventId = intval($_GET['delete_event_id']);
@@ -75,19 +84,19 @@ $events = $eventsDb->getAllEvents();
 
     ?>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="logo">
-        <h2>Admin.</h2>
-      </div>
-      <ul>
-        <li><a href="dashboard.php" class="active" data-page="dashboard">Dashboard</a></li>
-        <li><a href="chat.php" data-page="chat">Chat</a></li>
-        <li><a href="#" data-page="events">Events</a></li>
-        <li><a href="user-management.php" data-page="users">User Management</a></li>
-        <li><a href='#'>Log Out</a><li>
-      </ul>
-    </div>
+<div class="sidebar">
+  <div class="logo">
+    <h2>Admin.</h2>
+  </div>
+  <ul>
+    <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
+    <li><a href="chat.php" id="chat-link" data-page="chat">Chat</a></li>
+    <li><a href="#" data-page="calendar">Calendar</a></li>
+    <li><a href="#" data-page="events">Events</a></li>
+    <li><a href="user-management.php" id="user-management-link">User Management</a></li>
+    <li><a href="#">Log Out</a></li>
+  </ul>
+</div>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -345,74 +354,8 @@ $events = $eventsDb->getAllEvents();
 </div>
 
         <!-- User Management Page -->
-        <div id="users-page" class="page hidden">
-            <header>
-                <h1>User Management</h1>
-            </header>
-
-            <!-- User Modal -->
-            <div id="adduserModal" class="modal-overlay">
-            <div class="modal-content">
-                <span class="modal-close">&times;</span>
-                <h2>Add New User</h2>
-                <form id="userForm" onsubmit="return handleAddUser(event)">
-                    <div class="input-group">
-                        <input type="text" id="username" name="username" placeholder="Username" required>
-                        <div class="error-message" id="usernameError"></div>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" id="email" name="email" placeholder="Email" required>
-                        <div class="error-message" id="emailError"></div>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="password" name="password" placeholder="Password" required>
-                        <div class="error-message" id="passwordError"></div>
-                    </div>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
-        </div>
-
-<!-- Edit User Modal -->
-<div id="editUserModal" class="modal-overlay">
-            <div class="modal-content">
-                <span class="modal-close">&times;</span>
-                <h2>Edit User</h2>
-                <form id="editUserForm" onsubmit="return handleEditUser(event)">
-                    <input type="hidden" id="editUserId">
-                    <div class="input-group">
-                        <input type="text" id="editUsername" name="username" placeholder="Username" required>
-                        <div class="error-message" id="editUsernameError"></div>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" id="editEmail" name="email" placeholder="Email" required>
-                        <div class="error-message" id="editEmailError"></div>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="editPassword" name="password" placeholder="Password" required>
-                        <div class="error-message" id="editPasswordError"></div>
-                    </div>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
-        </div>
-
-            <!-- Users Table -->
-            <h2>Users List</h2>
-             <table class="common-table-style users-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                   
-                    <th> <button class="buttonadd" id="addUserBtn">Add User</button></th>
-                </tr>
-            </thead>
-            <tbody id="usersTableBody">
-            </tbody>
-        </table>
-    </div>
+        
+       
      <!-- Chat Page -->
  <div id="chat-page" class="page hidden">
         <header>
@@ -1055,29 +998,45 @@ function setError(input, errorElement, message) {
 
 
 
-            // Sidebar navigation
-            const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
-        const pages = document.querySelectorAll('.page');
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+    const pages = document.querySelectorAll('.page');
 
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', function (event) {
-                event.preventDefault();
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            const page = this.getAttribute('data-page');
 
-                // Remove 'active' class from all links
-                sidebarLinks.forEach(link => link.classList.remove('active'));
+            // Skip "User Management" link
+            if (this.id === 'user-management-link') {
+                return;
+            }
+            if (this.id === 'chat-link') {
+                return;
+            }
 
-                // Hide all pages
-                pages.forEach(page => page.classList.add('hidden'));
+            event.preventDefault();
 
-                // Add 'active' class to the clicked link
-                this.classList.add('active');
+            // Remove 'active' class from all links
+            sidebarLinks.forEach(link => link.classList.remove('active'));
 
-                // Show the corresponding page
-                const pageId = this.getAttribute('data-page') + '-page';
-                document.getElementById(pageId).classList.remove('hidden');
-            });
+            // Hide all pages
+            pages.forEach(page => page.classList.add('hidden'));
+
+            // Add 'active' class to the clicked link
+            this.classList.add('active');
+
+            // Show the corresponding page
+            const pageId = page + '-page';
+            const targetPage = document.getElementById(pageId);
+
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            } else {
+                console.error(`Element with ID "${pageId}" not found.`);
+            }
         });
-    </script>
+    });
+});</script>
      
     
   </body>
