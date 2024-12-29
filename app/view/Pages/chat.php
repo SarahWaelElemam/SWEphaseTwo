@@ -1,4 +1,11 @@
-<?php
+<?php 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'phpmailer/src/Exception.php';
+require 'phpmailer/src/PHPMailer.php';
+require 'phpmailer/src/SMTP.php';
+
 require_once("../../db/Dbh.php");
 $dbh = new Dbh();
 $conn = $dbh->getConn();
@@ -14,27 +21,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ticket_id'], $_POST['
     $ticketId = $_POST['ticket_id'];
     $status = $_POST['status'];
     $adminReply = $_POST['admin_reply'] ?? '';
+    $recipientEmail = $_POST['email']; // Get the email dynamically
 
     // Update ticket status
     $updateSql = "UPDATE chat SET status = ? WHERE id = ?";
     $updateStmt = $conn->prepare($updateSql);
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'm20930327@gmail.com';
+    $mail->Password = 'mylkxlurfdfsbies';
+    $mail->SMTPSecure = 'ssl';
+    $mail->Port = 465;
+    $mail->setFrom('m20930327@gmail.com');
+    $mail->addAddress($recipientEmail); // Use the dynamic email here
+    $mail->isHTML(true);
+    $mail->Subject = "Admin Reply";
+    $mail->Body = $adminReply;
+    $mail->send();
 
     if ($updateStmt) {
         $updateStmt->bind_param("si", $status, $ticketId);
         $updateStmt->execute();
         $updateStmt->close();
 
-        // Insert admin reply if provided
-        if (!empty($adminReply)) {
-            $replySql = "INSERT INTO replies (ticket_id, reply_text, admin_id) VALUES (?, ?, ?)";
-            $replyStmt = $conn->prepare($replySql);
-            $adminId = 1; // Replace with session or authenticated admin ID
-            $replyStmt->bind_param("isi", $ticketId, $adminReply, $adminId);
-            $replyStmt->execute();
-            $replyStmt->close();
-        }
-
-        echo "<script>alert('Status updated successfully!'); window.location.href = window.location.href;</script>";
+        echo "<script>alert('Reply Sent !! Status Updated Successfully!'); window.location.href = window.location.href;</script>";
     } else {
         echo "<script>alert('Failed to update status. Please try again.');</script>";
     }
@@ -119,16 +131,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ticket_id'], $_POST['
             </div>
             <div id="ticketsContainer">
                 <?php while ($row = $result->fetch_assoc()) { ?>
-                    <div class="ticket" data-ticket-id="<?php echo $row['id']; ?>"
+                    <div class="ticket" 
+                        data-ticket-id="<?php echo $row['id']; ?>"
                         data-status="<?php echo $row['status']; ?>"
                         data-issue="<?php echo htmlspecialchars($row['subject']); ?>"
                         data-message="<?php echo htmlspecialchars($row['message']); ?>"
                         data-name="<?php echo htmlspecialchars($row['fname'] . ' ' . $row['lname']); ?>"
+                        data-email="<?php echo htmlspecialchars($row['email']); ?>"
                         onclick="openDialog(this)">
                         <h5><?php echo htmlspecialchars($row['subject']); ?></h5>
                         <p class="name">Name: <?php echo htmlspecialchars($row['fname'] . ' ' . $row['lname']); ?></p>
-                        <p>Status: <span class="status <?php echo $row['status']; ?>"><?php echo $row['status']; ?></span>
-                        </p>
+                        <p>Status: <span class="status <?php echo $row['status']; ?>"><?php echo $row['status']; ?></span></p>
                     </div>
                 <?php } ?>
             </div>
@@ -147,12 +160,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ticket_id'], $_POST['
                     <div class="chat-section">
                         <p id="chatMessage" class="p-2 border rounded" style="background-color: #f8f9fa;"></p>
                     </div>
-                    <div id="repliesContainer" class="mb-3">
-                        <h6>Reply History:</h6>
-                        <!-- Replies will be dynamically populated here -->
-                    </div>
                     <form method="POST">
                         <input type="hidden" name="ticket_id" id="ticketId">
+                        <input type="hidden" name="email" id="emailInput"> <!-- Add this hidden field -->
                         <div class="mb-3">
                             <label for="updateStatus" class="form-label">Update Status:</label>
                             <select class="form-select" id="updateStatus" name="status">
@@ -177,11 +187,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ticket_id'], $_POST['
             const title = ticket.querySelector('h5').textContent;
             const message = ticket.dataset.message;
             const name = ticket.dataset.name;
+            const email = ticket.dataset.email; // Get the email
             const ticketId = ticket.dataset.ticketId;
 
             document.getElementById('dialogTitle').textContent = `Subject: ${title}`;
             document.getElementById('chatMessage').textContent = `Customer (${name}): ${message}`;
             document.getElementById('ticketId').value = ticketId;
+
+            // Set the email input hidden field or directly to the form if needed
+            const emailInput = document.getElementById('emailInput');
+            if (emailInput) {
+                emailInput.value = email;
+            }
 
             const dialogBox = new bootstrap.Modal(document.getElementById('dialogBox'));
             dialogBox.show();
