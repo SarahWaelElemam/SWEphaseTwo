@@ -104,14 +104,11 @@ foreach ($upcomingEvents as &$event) {
 <!-- Upcoming Events Section -->
 <div class="upcoming-events-container">
     <div class="section-header">
-        <button class="new-nav-btn" id="new-prev-btn">
-            <i class="fas fa-chevron-left"></i>
-        </button>
+        <button class="prev-upcoming">&larr;</button>
         <h2>Upcoming Events</h2>
-        <button class="new-nav-btn" id="new-next-btn">
-            <i class="fas fa-chevron-right"></i>
-        </button>
+        <button class="next-upcoming">&rarr;</button>
     </div>
+
 
     <div class="upcoming-events-slider">
         <?php if (!empty($upcomingEvents)): ?>
@@ -181,5 +178,37 @@ foreach ($upcomingEvents as &$event) {
     </div>
     <?php include "../Components/Footer.php"?>
 <script src="../../../public/js/homepage.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const prevButton = document.querySelector('.prev-upcoming');
+    const nextButton = document.querySelector('.next-upcoming');
+    const upcomingEventsSlider = document.querySelector('.upcoming-events-slider');
+    const upcomingEvents = document.querySelectorAll('.upcoming-event');
+    const eventsPerView = 3; // Number of events visible at a time
+    const totalEvents = upcomingEvents.length;
+    let currentUpcomingIndex = 0;
+
+    function updateUpcomingEvents() {
+        const translation = -currentUpcomingIndex * (100 / eventsPerView);
+        upcomingEventsSlider.style.transform = `translateX(${translation}%)`;
+    }
+
+    // Add click event listeners to the buttons
+    prevButton.addEventListener('click', () => {
+        currentUpcomingIndex = Math.max(currentUpcomingIndex - 1, 0);
+        updateUpcomingEvents();
+    });
+
+    nextButton.addEventListener('click', () => {
+        currentUpcomingIndex = Math.min(currentUpcomingIndex + 1, totalEvents - eventsPerView);
+        updateUpcomingEvents();
+    });
+
+    // Initialize the slider
+    updateUpcomingEvents();
+});
+</script>
+
+
 </body>
 </html>

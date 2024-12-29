@@ -1,3 +1,19 @@
+<?php
+require_once __DIR__ . '../../../Controller/SessionManager.php';
+use App\Controller\SessionManager;
+
+SessionManager::startSession();
+$isLoggedIn = SessionManager::isLoggedIn();
+?>
+<nav>
+    <?php if ($isLoggedIn): ?>
+        <a href="/app/view/pages/User.php">Profile</a>
+        <a href="/app/view/pages/Logout.php">Logout</a>
+    <?php else: ?>
+        <a href="/app/view/pages/Login_Signup.php">Login / Signup</a>
+    <?php endif; ?>
+</nav>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,9 +45,13 @@
                     <input type="checkbox" id="theme-toggle">
                     <span class="slider"></span>
                 </label>
-                <a href="Login_Signup.php"><i class="fas fa-user user-icon"></i></a>
-            </div>
-        </nav>
+                <!-- User Profile or Login/Signup -->
+                <div class="user-icon">
+    <a href="<?php echo $isLoggedIn ? '/SWEphaseTwo/app/view/pages/User.php' : '/SWEphaseTwo/app/view/pages/Login_Signup.php'; ?>">
+        <i class="fa fa-user"></i>
+    </a>
+</div>
+          </nav>
     </header>
     <script src="../js/NavBar.js"></script>
 </body>

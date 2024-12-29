@@ -68,43 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Upcoming Events Slider
-    const upcomingEventsSlider = document.querySelector('.upcoming-events-slider');
-    const events = document.querySelectorAll('.upcoming-event');
-    const prevBtn = document.getElementById('new-prev-btn');
-    const nextBtn = document.getElementById('new-next-btn');
-    const eventsPerPage = 3;
-    const maxIndex = Math.max(0, events.length - eventsPerPage);
-
-   function updateSliderPosition() {
-        const translateX = -currentIndex * (100 / eventsPerPage);
-        upcomingEventsSlider.style.transform = `translateX(${translateX}%)`;
-    }
-
-    function updateNavigationButtons() {
-        prevBtn.disabled = currentIndex <= 0;
-        nextBtn.disabled = currentIndex >= maxIndex;
-        
-        prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
-        nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
-    }
-
-    prevBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateSliderPosition();
-            updateNavigationButtons();
-        }
-    });
-
-    nextBtn.addEventListener('click', () => {
-        if (currentIndex < maxIndex) {
-            currentIndex++;
-            updateSliderPosition();
-            updateNavigationButtons();
-        }
-    });
-
+   
     // Initialize buttons state
     updateNavigationButtons();
 });
@@ -135,3 +99,31 @@ hotEvents.forEach((event, index) => {
 
 // Add an initial sync for page load
 syncHotEventsToTickets(0);
+
+
+
+
+let currentUpcomingIndex = 0;
+const upcomingEventsSlider = document.querySelector('.upcoming-events-slider');
+const upcomingEvents = document.querySelectorAll('.upcoming-event');
+const eventsPerView = 3;
+
+function updateUpcomingEvents() {
+    const translation = -currentUpcomingIndex * (100 / eventsPerView);
+    upcomingEventsSlider.style.transform = `translateX(${translation}%)`;
+}
+
+function nextUpcomingEvent() {
+    const maxIndex = upcomingEvents.length - eventsPerView;
+    if (currentUpcomingIndex < maxIndex) {
+        currentUpcomingIndex++;
+        updateUpcomingEvents();
+    }
+}
+
+function prevUpcomingEvent() {
+    if (currentUpcomingIndex > 0) {
+        currentUpcomingIndex--;
+        updateUpcomingEvents();
+    }
+}

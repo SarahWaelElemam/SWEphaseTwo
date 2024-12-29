@@ -165,7 +165,7 @@ body, html {
 .hot-event {
     flex: 0 0 300px; /* Fixed width */
     height: 200px;
-    margin-right: 20px;
+    margin-right: 60px;
     background-size: cover;
     background-position: center;
     border-radius: 10px;
@@ -662,3 +662,46 @@ font-family: 'Times New Roman', Times, serif;
     border-color: #fedda8;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+.upcoming-events-container .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 24px;
+
+    color: grey;
+}
+
+.upcoming-events-container .prev-upcoming,
+.upcoming-events-container .next-upcoming {
+    background: none;
+    border: none;
+    color: grey;
+    font-size: 28px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.upcoming-events-container .prev-upcoming:hover,
+.upcoming-events-container .next-upcoming:hover {
+    color: yellow;
+}
+
+.upcoming-events-slider {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+}
+
+
+
