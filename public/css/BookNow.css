@@ -55,7 +55,6 @@
   }
   
   .book-btn {
-    background-color: #f67434;
     border: none;
     padding: 10px 40px;
     color: #333;
@@ -137,31 +136,19 @@
   
   .ticket-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .ticket {
-    width: 30%;
-    background-color: #fff;
-    border: 2px solid #ffc700;
-    border-radius: 25px;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 20px;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s ease-in-out;
-    position: relative;
-  }
+    flex-wrap: wrap; /* Allow wrapping for responsiveness */
+    justify-content: center; /* Center items to avoid gaps */
+    gap: 20px; /* Add spacing between tickets */
+}
+
   
   .ticket:hover {
     transform: scale(1.05);
   }
   
-  .ticket h3 {
-    font-size: 28px;
+  .ticket h2 {
     margin-bottom: 10px;
-    color: #ff5500;
+    background-color: brown;
   }
   
   .ticket p {
@@ -169,18 +156,7 @@
     margin-bottom: 10px;
     color: #333;
   }
-  
-  .ticket-btn {
-    background-color: #f67434;
-    border: none;
-    padding: 15px 100px;
-    font-size: 18px;
-    color: #fff;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
+
   .ticket-btn:hover {
     background-color: #ffcd03;
   }
@@ -196,7 +172,16 @@
     margin-bottom: 0.5rem;
     color: #333;
   }
-  
+  .ticket {
+    flex: 1 1 calc(50% - 20px); /* Adjust size to fit two items per row */
+    max-width: calc(50% - 20px); /* Ensure max width matches flex basis */
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
   .ticket-select {
     width: 100%;
     padding: 0.8rem 1.2rem; /* Adjusted padding for better mobile experience */
@@ -208,10 +193,6 @@
     outline: none;
     cursor: pointer;
     transition: border-color 0.3s ease;
-  }
-  
-  .ticket-select:focus {
-    border-color: #ff5500;
   }
   
   .ticket-select option {
@@ -242,162 +223,213 @@
   }
   #ticketPrice {
     font-size: 20px;
+    display: inline-block;
   }
-  
-  .close-btn {
-    color: #aaa;
-    float: right;
-    font-size: 1.8rem; /* Changed to rem for responsiveness */
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .close-btn:hover,
-  .close-btn:focus {
-    color: #000;
-  }
-  
-  .confirm-btn {
-    background-color: #ff5500;
-    color: #fff;
+
+  .btn-book {
+    background-color: rgb(253, 170, 17);
+    color: white;
+    padding: 10px 30px;
     border: none;
-    padding: 0.8rem 2rem; /* Adjusted padding for better mobile experience */
-    font-size: 1.5rem; /* Changed to rem for responsiveness */
-    border-radius: 15px;
+    border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .confirm-btn:hover {
-    background-color: #ff7700;
-  }
-  
-  /* Media Queries for Responsiveness */
-  @media (max-width: 768px) {
-    .modal-content {
-      margin: 10% auto; /* Adjust margin for medium screens */
-    }
-  
-    .ticket-label,
-    .ticket-select,
-    .confirm-btn {
-      font-size: 1.2rem; /* Smaller font size for better readability */
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .modal-content {
-      margin: 15% auto; /* Adjust margin for small screens */
-    }
-  
-    .ticket-label,
-    .ticket-select,
-    .confirm-btn {
-      font-size: 1rem; /* Smaller font size for smaller screens */
-    }
-  
-    .close-btn {
-      font-size: 1.5rem; /* Smaller close button for better mobile experience */
-    }
-  }
-  /* Venue Section */
-  .venue-section {
-    margin: 40px auto;
-    max-width: 1200px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .venue-section h2 {
-    text-align: left;
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-  
+    transition: background-color 0.3s;
+    font-size: 1rem;
+ }
+ 
+ .btn-book:hover {
+    background-color: #ffc234;
+ }
+ .counter-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.counter-btn {
+  font-size: 24px;
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.counter-btn:hover {
+  background-color: #ffcd03;
+}
+
+.ticket-count {
+  font-size: 20px;
+  text-align: center;
+  width: 50px;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  text-align: center;
+}
+
+.modal-content {
+  position: relative; /* Relative positioning to enable absolute positioning of the close button */
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 90%; /* Width for smaller screens */
+  max-width: 600px; /* Maximum width for larger screens */
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+  position: absolute; /* Absolute positioning within the modal-content */
+  top: 10px; /* Position 10px from the top */
+  left: 10px; /* Position 10px from the left */
+  font-size: 20px; /* Increase the font size */
+  color: white; /* White color for the cross */
+  background-color: red; /* Red background color */
+  padding: 5px 10px; /* Add padding to make the button bigger */
+  border-radius: 20%; /* Circular shape */
+  cursor: pointer; /* Pointer cursor to indicate it's clickable */
+  z-index: 10; /* Ensure it stays above other content */
+}
+
+.close-btn:hover {
+  background-color: darkred; /* Darker red on hover */
+}
+.counter-btn {
+  background-color: orange;
+  color: white;
+  cursor: pointer;
+  border: none;
+  padding: 1rem 1rem;
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.counter-btn:hover {
+  background-color: darkorange;
+}
+
+.confirm-btn{
+  background-color: rgba(255, 190, 70, 0.53); 
+  color: white; 
+  border: none; 
+  padding: 1rem 2rem; 
+  border-radius: 1rem; 
+  cursor: pointer; 
+  font-size: 1rem;
+}
+.confirm-btn:hover {
+  background-color: #ffcd03;
+}
+/* Venue Section */
+.venue-section {
+  margin: 40px auto;
+  max-width: 1200px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.venue-section h2 {
+  text-align: left;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.venue-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.venue-details {
+  padding: 40px;
+  width: 70%;
+  background-color: #efefef;
+  border-radius: 60px;
+  margin: 30px 0;
+}
+
+.venue-details h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.venue-details p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.venue-links {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.venue-links a {
+  text-decoration: underline;
+  font-size: 16px;
+  color: #333;
+}
+
+.venue-facilities {
+  font-size: 16px;
+}
+
+.venue-image {
+  width: 40%;
+  margin: 30px 0;
+}
+
+.venue-image img {
+  width: 100%;
+  border-radius: 60px;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .venue-container {
-    display: flex;
-    justify-content: space-between;
+    flex-direction: column;
   }
-  
+
   .venue-details {
-    padding: 40px;
-    width: 70%;
-    background-color: #efefef;
-    border-radius: 60px;
-    margin: 30px 0;
-  }
-  
-  .venue-details h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  .venue-details p {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  .venue-links {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .venue-links a {
-    text-decoration: underline;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .venue-facilities {
-    font-size: 16px;
-  }
-  
-  .venue-image {
-    width: 40%;
-    margin: 30px 0;
-  }
-  
-  .venue-image img {
     width: 100%;
-    border-radius: 60px;
-    object-fit: cover;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0px;
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .venue-container {
-      flex-direction: column;
-    }
-  
-    .venue-details {
-      width: 100%;
-      margin-bottom: 0px;
-    }
-  
-    .venue-image {
-      width: 100%;
-    }
+
+  .venue-image {
+    width: 100%;
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .ticket {
-      width: 100%;
-      margin-bottom: 15px;
-    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ticket {
+    width: 100%;
+    margin-bottom: 15px;
   }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .event-details {
-      flex-direction: row;
-      text-align: center;
-    }
-  
-    .right-details img {
-      margin: 5px 0;
-    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-details {
+    flex-direction: row;
+    text-align: center;
   }
+
+  .right-details img {
+    margin: 5px 0;
+  }
+}

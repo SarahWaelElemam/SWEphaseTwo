@@ -17,7 +17,7 @@
       <div class="footer-left">
   <img src="../../../public/images/logo.png" alt="TixCarte Logo" class="footer-logo" />
   <ul class="footer-links">
-    <li><a href="Events.php">All Tickets on Sale</a></li>
+    <li style='width: 220px;'><a href="Events.php">All Tickets on Sale</a></li>
     <li><a href="homepage.php">Hot Events</a></li>
   </ul>
 </div>
@@ -29,7 +29,6 @@
             <li><a href="file.php">Contact Us</a></li>
             <li><a href="AboutUs.php">Careers</a></li>
             <li><a href="PrivPol.php">Policies</a></li>
-            <li><a href="#">FAQs</a></li>
           </ul>
         </div>
 

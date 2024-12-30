@@ -713,3 +713,29 @@ header h1 {
   outline: none;
   box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.5); /* Focus ring for accessibility */
 }
+
+/* Status column styling */
+.status-column {
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px; /* Optional: adds rounded corners */
+}
+
+/* Pending status - yellow background */
+.pending-status {
+  background-color: #ffeb3b; /* Light yellow */
+  color: black;
+}
+
+/* Rejected status - red background */
+.rejected-status {
+  background-color: #f44336; /* Red */
+  color: white;
+}
+
+/* Accepted status - green background */
+.accepted-status {
+  background-color: #4caf50; /* Green */
+  color: white;
+}

@@ -1,3 +1,29 @@
+<?php
+// Include the Eventsdb class
+require_once("../../model/Model.php");
+require_once("../../model/Eventsdb.php");
+
+// Database connection (replace with your actual credentials)
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Project";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Instantiate the Eventsdb class
+$eventsDb = new Eventsdb($conn);
+
+// Fetch the 6 newest events
+$events = $eventsDb->getAllEventsToDisplay(8);
+$upcomingEvents = $eventsDb->getUpcomingEvents('Pending'); // Assuming getUpcomingEvents is a method in Eventsdb
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,67 +36,76 @@
 <body>
     <?php include "../Components/NavBar.php" ?>
     <div class="ticket-container">
-        <div class="ticket-slider">
-            <div class="ticket">
+    <div class="ticket-slider">
+    <?php if (!empty($events)): ?>
+        <?php foreach ($events as $index => $event): ?>
+            <div class="ticket" data-event-index="<?php echo $index; ?>">
                 <div class="basic">
                     <div class="event-details">
-                        <h2>INTIFADET ILMOND</h2>
-                        <p><strong>Date:</strong> Nov 15</p>
-                        <p><strong>Venue:</strong> Zed Park - El Sheikh Zayed</p>
-                        <p><img src="../images/images.png"></p>
+                        <h2><?php echo htmlspecialchars($event['Name']); ?></h2>
+                        <p><strong></strong> <?php echo htmlspecialchars($event['Location']); ?></p>
+                        <p><?php echo htmlspecialchars($event['Category']); ?></p>
+                        <p><?php echo htmlspecialchars(date('M d',strtotime($event['Date']))); ?> | 
+                        <?php echo htmlspecialchars(date('h:ia ',strtotime($event['Time']))); ?></p>
                     </div>
                     <button onclick=""><i class="fa-solid fa-ticket"></i> Book Now</button>
                 </div>
-                <div class="airline">
-                    <img src="../images/event1.png" alt="Event Image" class="event-image">
+                <div class="event-image-box">
+                    <?php if (!empty($event['image'])): ?>
+                        <img src="../../../public/images/<?php echo htmlspecialchars($event['image']); ?>" alt="Event Image">
+                    <?php else: ?>
+                        <p>No image available</p>
+                    <?php endif; ?>
                 </div>
             </div>
-        </div>
-    </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No newest events available.</p>
+    <?php endif; ?>
+</div>
+<div class="hot-events-slider">
+    <?php if (!empty($events)): ?>
+        <?php foreach ($events as $index => $event): ?>
+            <div class="hot-event <?php echo $index === 0 ? 'active' : ''; ?>" 
+                 data-event-index="<?php echo $index; ?>"
+                 style="background-image: url('../../../public/images/<?php echo $event['image']; ?>');">
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No hot events available.</p>
+    <?php endif; ?>
+</div>
 
-    <!-- Hot Events Section -->
-    <div class="hot-events-container">
-        <h2>Hot Events</h2>
-        <div class="hot-events-slider">
-            <div class="hot-event active" id="event1"></div>
-            <div class="hot-event" id="event2"></div>
-            <div class="hot-event" id="event3"></div>
-        </div>
-    </div>
 
 <!-- Upcoming Events Section -->
 <div class="upcoming-events-container">
-        <div class="section-header">
-            <button class="new-nav-btn" id="new-prev-btn">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <h2>Upcoming Events</h2>
-            <button class="new-nav-btn" id="new-next-btn">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </div>
-
-        <div class="upcoming-events-slider">
-            <div class="upcoming-event" id="upcoming1">
-                <img src="../images/event4.jpg" alt="Upcoming Event 1" class="event-image">
-            </div>
-            <div class="upcoming-event" id="upcoming2">
-                <img src="../images/event6.jpg" alt="Upcoming Event 2" class="event-image">
-            </div>
-            <div class="upcoming-event" id="upcoming3">
-                <img src="../images/event5.png" alt="Upcoming Event 3" class="event-image">
-            </div>
-            <div class="upcoming-event" id="upcoming4">
-                <img src="../images/event1.png" alt="Upcoming Event 4" class="event-image">
-            </div>
-            <div class="upcoming-event" id="upcoming5">
-                <img src="../images/event3.png" alt="Upcoming Event 5" class="event-image">
-            </div>
-            <div class="upcoming-event" id="upcoming6">
-                <img src="../images/eventMemo.png" alt="Upcoming Event 6" class="event-image">
-            </div>
-        </div>
+    <div class="section-header">
+        <button class="new-nav-btn" id="new-prev-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <h2>Upcoming Events</h2>
+        <button class="new-nav-btn" id="new-next-btn">
+            <i class="fas fa-chevron-right"></i>
+        </button>
     </div>
+
+    <div class="upcoming-events-slider">
+        <?php if (!empty($upcomingEvents)): ?>
+            <?php foreach ($upcomingEvents as $event): ?>
+                <div class="upcoming-event">
+                    <img src="../../../public/images/<?php echo $event['image']; ?>" alt="Upcoming Event Image" class="event-image">
+                    <div class="event-content">
+                        <h2><?php echo htmlspecialchars($event['Name']); ?></h2>
+                        <p><?php echo htmlspecialchars($event['Location']); ?></p>
+                        <p><?php echo htmlspecialchars($event['Category']); ?></p>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No upcoming events available.</p>
+        <?php endif; ?>
+    </div>
+</div>
 
     <!-- Explore Categories Section -->
     <div class="explore-categories">
@@ -78,7 +113,7 @@
         <div class="category-slider">
             <div class="category-ticket">
                 <div class="category-image">
-                    <img src="../images/event1.png" alt="Music Events">
+                    <img src="../../../public/images/event1.png" alt="Music Events">
                 </div>
                 <div class="category-info">
                     <h3>Music</h3>
@@ -86,7 +121,7 @@
             </div>
             <div class="category-ticket">
                 <div class="category-image">
-                    <img src="../images/event6.jpg" alt="Summits">
+                    <img src="../../../public/images/event6.jpg" alt="Summits">
                 </div>
                 <div class="category-info">
                     <h3>Summits</h3>
@@ -94,7 +129,7 @@
             </div>
             <div class="category-ticket">
                 <div class="category-image">
-                    <img src="../images/event5.png" alt="Stand-Up Comedy">
+                    <img src="../../../public/images/event5.png" alt="Stand-Up Comedy">
                 </div>
                 <div class="category-info">
                     <h3>Stand-Up Comedy</h3>
@@ -102,7 +137,7 @@
             </div>
             <div class="category-ticket">
                 <div class="category-image">
-                    <img src="../images/eventMemo.png" alt="Theater">
+                    <img src="../../../public/images/eventMemo.png" alt="Theater">
                 </div>
                 <div class="category-info">
                     <h3>Theater</h3>
@@ -112,15 +147,29 @@
     </div>
 
     <!-- Login/Signup Section -->
-    <div class="login-signup-section">
-        <div class="user-icon">
-            <img src="../images/iconuser.png">
-        </div>
+    <?php if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])): ?>
+<div class="login-signup-section" id="login-signup-section">
+    <div class="user-icon">
+        <img src="../../../public/images/iconuser.png" alt="User Icon">
+    </div>
         <h2>Login Or Signup To Gain Additional Benefits</h2>
         <p>Get your own personal profile, follow artists you love and more when you sign up for a TixCarte account</p>
         <button class="login-signup-btn">Login / Signup</button>
     </div>
+    <?php endif; ?>
     <?php include "../Components/Footer.php"?>
-<script src="../js/homepage.js"></script>
+<script src="../../../public/js/homepage.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const isLoggedIn = <?php echo isset($_SESSION['user_id']) && !empty($_SESSION['user_id']) ? 'true' : 'false'; ?>;
+    
+    if (isLoggedIn) {
+        const loginSignupSection = document.getElementById('login-signup-section');
+        if (loginSignupSection) {
+            loginSignupSection.remove(); // Removes the section from the DOM
+        }
+    }
+});
+</script>
 </body>
 </html>

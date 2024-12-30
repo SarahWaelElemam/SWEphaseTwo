@@ -26,7 +26,7 @@ section#environment {
 body {
     background: linear-gradient(to top, white,white,white, #ffcd037f);
     color: #000;
-}
+} 
 
 .wrapper {
     max-width: 1440px;

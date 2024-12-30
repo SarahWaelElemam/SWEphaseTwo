@@ -12,15 +12,16 @@ $email = "legal at TicketsMarche.com";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?php echo $title; ?></title>
-    <link rel="stylesheet" href="../../../public/css/PrivPol.css"> <!-- Include your CSS file here -->
+    <link rel="stylesheet" href="../../../public/css/PrivPol.css">
 </head>
 <body>
 <?php include "../Components/NavBar.php"?>
     <header>
-    </header>
+    
     
     <section class="PrivPol">
         <h2>Our Policies / Privacy Policy</h2>
+        <div class='content'>
         <p>Welcome to Ticketsmarche! Please know that it is very important to us to protect your personal information. You must also know that we totally respect your privacy. Our Privacy Policy below is there to explain how we handle the information you share with us.</p>
         
         <h4>Consumer Privacy at Ticketsmarche:</h4>
@@ -44,12 +45,13 @@ $email = "legal at TicketsMarche.com";
         
         <h4>How to contact us</h4>
         <p>If you have any questions about this summary, our Privacy Policy, or our information practices, please contact us by email or postal mail below:</p>
-        
-        <footer>
+</div>
+        <section class='infoo'>
             <p><?php echo $companyName; ?><br><?php echo $address; ?><br><?php echo $email; ?></p>
             <p><i>&copy; <?php echo $companyName; ?>. All rights reserved.</i></p>
-        </footer>
+        </section>
     </section>
+    </header>
     <?php include "../Components/Footer.php"?>
 </body>
 </html>

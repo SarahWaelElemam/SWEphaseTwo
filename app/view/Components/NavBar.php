@@ -1,3 +1,11 @@
+<?php
+require_once __DIR__ . '../../../Controller/SessionManager.php';
+use App\Controller\SessionManager;
+
+SessionManager::startSession();
+$isLoggedIn = SessionManager::isLoggedIn();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,30 +17,30 @@
 </head>
 <body>
     <header>
-        <nav class="navbar">
+    <nav class="navbar">
             <div class="logo">
-                <img src="../../../public/images/logo.png">
+                <img src="../../../public/images/logo.png" alt="Logo">
             </div>
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" placeholder="Search...">
             </div>
-            <button class="menu-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
             <div class="nav-items">
                 <a href="Events.php" class="nav-link">Events</a>
                 <a href="file.php" class="nav-link">Contact & Support</a>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="theme-toggle">
-                    <span class="slider"></span>
-                </label>
-                <a href="Login_Signup.php"><i class="fas fa-user user-icon"></i></a>
-            </div>
+                <?php if ($isLoggedIn): ?>
+                    <a href="../../../app/view/pages/Logout.php" class="nav-link">Logout</a> <!-- Show logout if logged in -->
+                    <?php endif; ?>
+                <!-- User Profile or Login/Signup -->
+                
+                <a class="nav-link"   href="<?php echo $isLoggedIn ? 'User.php' : 'Login_Signup.php'; ?>">
+                <i class="fa fa-user" style=' font-size: 1.5rem; overflow:hidden'></i>
+                    </a>
+                </div>
+            
+
         </nav>
     </header>
-    <script src="../js/NavBar.js"></script>
+    <script src="../../../public/NavBar.js"></script>
 </body>
-</html>
+</html>     
