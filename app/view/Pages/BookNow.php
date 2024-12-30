@@ -3,7 +3,10 @@ require_once("../../../app/controller/UserController.php");
 include "../Components/NavBar.php";
 require_once("../../db/Dbh.php");
 require_once("../../model/Ticket.php");
+require_once '../../db/auth.php';
 
+// Check if the user has permission to edit users (assuming 'edit_users' permission exists)
+checkPermission('BookNow.php');
 $dbh = new Dbh();
 $conn = $dbh->getConn();
 $ticketsModel = new Ticket($conn);

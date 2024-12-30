@@ -463,3 +463,30 @@ body {
 .close-button:hover {
     color: #333;
 }
+#forgot-password-modal{
+    padding: 2rem;
+}
+#forgot-password-modal label{
+font-family: 'Times New Roman', Times, serif;
+font-weight: 800;
+font-size: 1.2rem;
+color: #d8870f;
+}
+#forgot-email{
+    border-color: #afafaf;
+    border-radius: 1rem;
+    margin: 1rem;
+    font-size: 1.2rem;
+}
+#send-code{
+    background-color: #d8870f;
+    color: white;
+    font-size: 1rem;
+    padding: 0.6rem;
+    border-radius: 1rem;
+    border-color: transparent;
+    cursor: pointer;
+}
+.close-button{
+    translate: -35rem 11rem;
+}
